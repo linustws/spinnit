@@ -12,8 +12,8 @@ NUM_SPIN_FRAMES = 100
 NUM_BLINK_FRAMES = 20
 NUM_TOTAL_FRAMES = NUM_SPIN_FRAMES + NUM_BLINK_FRAMES
 DURATIONS = [1000, 300, 200, 130, 80, 60, 40, 30, 25, 20] \
-            + [20 for i in range(NUM_SPIN_FRAMES - 20)] + [20, 25, 30, 40, 60, 80, 130, 200, 300, 1000] \
-            + [100 for i in range(NUM_BLINK_FRAMES)]  # Fastest 20
+            + [20 for _ in range(NUM_SPIN_FRAMES - 20)] + [20, 25, 30, 40, 60, 80, 130, 200, 300, 1000] \
+            + [100 for _ in range(NUM_BLINK_FRAMES)]  # Fastest 20
 MASK_IMG = Image.open('mask.png')
 SPINNER_CENTER_IMG = Image.open('spinner_center.png')
 TRIANGLE_IMG = Image.open('triangle.png')
@@ -33,7 +33,18 @@ class SpinnerGifMaker:
             color = (r, g, b, a)
             colors.append(color)
         self.colors = colors
-        self.angles = [i * random.randint(-60, -40) for i in range(NUM_SPIN_FRAMES)]
+        start_angles = [-2, -5, -10, -15, -20, -30, -40, -60, -80, -100]
+        for i in range(len(start_angles)):
+            start_angles[i] = i * start_angles[i]
+        end_angles = [-100, -80, -60, -40, -30, -20, -15, -10, -5, -2]
+        for i in range(len(end_angles)):
+            end_angles[i] = (len(end_angles) - i) * -end_angles[i] - 13000
+        angles = start_angles + [i * -150 - 1000 for i in
+                                 range(NUM_SPIN_FRAMES - 20)] + end_angles
+        random_offset = random.randint(0, 359)
+        self.angles = [i - random_offset for i in angles]
+        print(self.angles)
+        print(len(self.angles))
 
         frame_list = []
         for i in range(NUM_TOTAL_FRAMES):
