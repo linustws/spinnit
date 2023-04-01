@@ -11,11 +11,9 @@ RADIUS = 200
 NUM_SPIN_FRAMES = 100
 NUM_BLINK_FRAMES = 20
 NUM_TOTAL_FRAMES = NUM_SPIN_FRAMES + NUM_BLINK_FRAMES
-ANGLES = [i * -50 for i in range(NUM_SPIN_FRAMES)]  # Fastest
 DURATIONS = [1000, 300, 200, 130, 80, 60, 40, 30, 25, 20] \
             + [20 for i in range(NUM_SPIN_FRAMES - 20)] + [20, 25, 30, 40, 60, 80, 130, 200, 300, 1000] \
-            + [100 for i in range(NUM_BLINK_FRAMES)]  #
-# Fastest 20
+            + [100 for i in range(NUM_BLINK_FRAMES)]  # Fastest 20
 MASK_IMG = Image.open('mask.png')
 SPINNER_CENTER_IMG = Image.open('spinner_center.png')
 TRIANGLE_IMG = Image.open('triangle.png')
@@ -24,6 +22,7 @@ TRIANGLE_IMG = Image.open('triangle.png')
 class SpinnerGifMaker:
 
     def __init__(self, options):
+        random.shuffle(options)
         self.options = options
         colors = []
         for _ in enumerate(options):
@@ -34,6 +33,7 @@ class SpinnerGifMaker:
             color = (r, g, b, a)
             colors.append(color)
         self.colors = colors
+        self.angles = [i * random.randint(-60, -40) for i in range(NUM_SPIN_FRAMES)]
 
         frame_list = []
         for i in range(NUM_TOTAL_FRAMES):
@@ -75,13 +75,12 @@ class SpinnerGifMaker:
         spinner_img.putalpha(MASK_IMG)
         # Add blink effect to triangle image on last frame
         if frame_number < NUM_SPIN_FRAMES:
-            spinner_img = spinner_img.rotate(ANGLES[frame_number], center=CENTER)
+            spinner_img = spinner_img.rotate(self.angles[frame_number], center=CENTER)
         else:
-            spinner_img = spinner_img.rotate(ANGLES[-1], center=CENTER)
+            spinner_img = spinner_img.rotate(self.angles[-1], center=CENTER)
         if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
             spinner_img.paste(TRIANGLE_IMG, mask=TRIANGLE_IMG)
         spinner_img.paste(SPINNER_CENTER_IMG, mask=SPINNER_CENTER_IMG)
         return spinner_img
-
 
 # SpinnerGifMaker(["hi", "play", "sleep", "run", "dance", "eat", "fly", "study"])
