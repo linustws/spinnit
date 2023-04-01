@@ -7,6 +7,7 @@ import time
 import traceback
 from io import BytesIO
 
+import telegram
 from PIL import Image, ImageDraw, ImageFont
 
 from telegram import Update
@@ -59,7 +60,8 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /start command")
     await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="Hamou~ Use me to help you make decisions :D Type "
+                                   text="hamou "
+                                        "Type "
                                         "/help to see available "
                                         "commands.")
 
@@ -79,18 +81,22 @@ async def echo_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called an unknown command")
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that command.")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="huh")
 
 
 async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /spin command")
     options = context.args
     if not options:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Please provide some options!")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="what are ur options?")
         return
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Hmm...thinking, thinking...")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking")
     SpinnerGifMaker(options)
-    await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
+    try:
+        await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
+    except telegram.error.RetryAfter as e:
+        main_logger.log('warning', "Telegram API rate limit exceeded!")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="tsk can chill?")
 
 
 if __name__ == '__main__':

@@ -43,8 +43,6 @@ class SpinnerGifMaker:
                                  range(NUM_SPIN_FRAMES - 20)] + end_angles
         random_offset = random.randint(0, 359)
         self.angles = [i - random_offset for i in angles]
-        print(self.angles)
-        print(len(self.angles))
 
         frame_list = []
         for i in range(NUM_TOTAL_FRAMES):
