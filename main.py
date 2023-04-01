@@ -1,25 +1,24 @@
 import html
+import io
 import json
+import math
 import random
-import traceback
-import pygame
 import time
+import traceback
+from io import BytesIO
 
-from telegram import InlineKeyboardButton
-from telegram import InlineKeyboardMarkup
-from telegram import InlineQueryResultArticle
-from telegram import InputTextMessageContent
+from PIL import Image, ImageDraw, ImageFont
+
 from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import ApplicationBuilder
 from telegram.ext import CommandHandler
 from telegram.ext import ContextTypes
-from telegram.ext import ConversationHandler
-from telegram.ext import InlineQueryHandler
 from telegram.ext import MessageHandler
 from telegram.ext import filters
 
 from Logger import Logger
+from SpinnerGifMaker import SpinnerGifMaker
 
 telegram_logger = Logger('telegram.ext._application', 'helpJoyMakeDecisions.log')
 main_logger = Logger('main', 'helpJoyMakeDecisions.log')
@@ -83,15 +82,15 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that command.")
 
 
-async def spin_command(update, context):
+async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /spin command")
-    # Define the options for the spinning wheel
-    options = ['Watch a movie', 'Go for a walk', 'Cook dinner', 'Play a game']
-    # Create a list of InlineKeyboardButton objects with the options
-    keyboard = [[InlineKeyboardButton(option, callback_data=option)] for option in options]
-    # Create the keyboard markup and send it as a reply to the user
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Spin the wheel:", reply_markup=reply_markup)
+    options = context.args
+    if not options:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Please provide some options!")
+        return
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Hmm...thinking, thinking...")
+    SpinnerGifMaker(options)
+    await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
 
 
 if __name__ == '__main__':
