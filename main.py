@@ -60,18 +60,15 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /start command")
     await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="hamou "
-                                        "Type "
-                                        "/help to see available "
-                                        "commands.")
+                                   text="hamou~ type /help to see available commands")
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /help command")
     caps = "/caps - capitalise whatever you say\n"
     await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="Available commands:\n/start - check if the bot is alive\n/help - see "
-                                        "available commands\n/spin - spin the wheel")
+                                   text="\n/start - check if the bot is alive\n/help - see "
+                                        "available commands\n/decide - help you decide")
 
 
 async def echo_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -81,23 +78,23 @@ async def echo_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called an unknown command")
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="huh")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="huh idk wym")
 
 
 async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    main_logger.log('info', f"User {update.effective_user.id} called the /spin command")
+    main_logger.log('info', f"User {update.effective_user.id} called the /decide command")
     options = context.args
     if not options:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="what are ur options?")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="enter some options separated with "
+                                                                              "spaces after /decide")
         return
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
     SpinnerGifMaker(options)
     try:
         await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
     except telegram.error.RetryAfter as e:
         main_logger.log('warning', "Telegram API rate limit exceeded!")
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="tsk stop spamming leh")
-
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="ps i cnt think rn")
 
 if __name__ == '__main__':
     application = ApplicationBuilder().token(***REMOVED***)
