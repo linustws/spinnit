@@ -21,8 +21,8 @@ from telegram.ext import filters
 from Logger import Logger
 from SpinnerGifMaker import SpinnerGifMaker
 
-telegram_logger = Logger('telegram.ext._application', 'helpJoyMakeDecisions.log')
-main_logger = Logger('main', 'helpJoyMakeDecisions.log')
+telegram_logger = Logger('telegram.ext._application', 'helpJoyDecide.log')
+main_logger = Logger('main', 'helpJoyDecide.log')
 
 DEVELOPER_CHAT_ID = ***REMOVED***
 
@@ -96,7 +96,7 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
     except telegram.error.RetryAfter as e:
         main_logger.log('warning', "Telegram API rate limit exceeded!")
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="tsk can chill?")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="tsk stop spamming leh")
 
 
 if __name__ == '__main__':
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     start_handler = CommandHandler('start', start_command)
     echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo_message)
     help_handler = CommandHandler('help', help_command)
-    spin_handler = CommandHandler('spin', spin_command)
+    spin_handler = CommandHandler('decide', spin_command)
     # caps_handler = CommandHandler('caps', caps_command)
     # inline_caps_handler = InlineQueryHandler(caps_inline)
     unknown_handler = MessageHandler(filters.COMMAND, unknown_command)
