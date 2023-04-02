@@ -41,8 +41,14 @@ class SpinnerGifMaker:
             end_angles[i] = (len(end_angles) - i) * -end_angles[i] - 13000
         angles = start_angles + [i * -150 - 1000 for i in
                                  range(NUM_SPIN_FRAMES - 20)] + end_angles
-        random_offset = random.randint(0, 359)
-        self.angles = [i - random_offset for i in angles]
+        start_offset = random.randint(0, 359)
+        end_offset = random.randint(0, 359)
+        first_half = angles[:50]
+        second_half = angles[50:]
+        first_half = [angle - start_offset for angle in first_half]
+        second_half = [angle - end_offset for angle in second_half]
+        self.angles = first_half + second_half
+        # print(self.angles[49] - self.angles[48], self.angles[50] - self.angles[49], self.angles[51] - self.angles[50])
 
         frame_list = []
         for i in range(NUM_TOTAL_FRAMES):
