@@ -89,7 +89,10 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                                                               "spaces after /decide")
         return
     await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
-    SpinnerGifMaker(options)
+    try:
+        SpinnerGifMaker(options)
+    except ValueError as e:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="too many options!")
     try:
         await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
     except telegram.error.RetryAfter as e:
