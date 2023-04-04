@@ -84,16 +84,17 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
     try:
         SpinnerGifMaker(options)
-    except ValueError as e:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="too many options!")
-    try:
         await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
     except telegram.error.RetryAfter as e:
         main_logger.log('warning', "Telegram API rate limit exceeded!")
         await context.bot.send_message(chat_id=update.effective_chat.id, text="ps i cnt think rn")
+    except ValueError as e:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="too many options!")
+
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token(***REMOVED***)
+    application = ApplicationBuilder().token(***REMOVED***).read_timeout(
+        30).write_timeout(30).build()
 
     start_handler = CommandHandler('start', start_command)
     echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo_message)
