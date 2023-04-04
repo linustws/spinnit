@@ -7,10 +7,7 @@
     <list default="true" id="306418b6-67b0-450c-a90f-c13eda29700f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SpinnerGifMaker.py" beforeDir="false" afterPath="$PROJECT_DIR$/SpinnerGifMaker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cat-modified.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/center_circle_mask.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/helpJoyDecide.log" beforeDir="false" afterPath="$PROJECT_DIR$/helpJoyDecide.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mask.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/spinner.gif" beforeDir="false" afterPath="$PROJECT_DIR$/spinner.gif" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -365,7 +362,7 @@
       <workItem from="1680592267141" duration="112000" />
       <workItem from="1680592457547" duration="71000" />
       <workItem from="1680592607804" duration="710000" />
-      <workItem from="1680593329545" duration="35737000" />
+      <workItem from="1680593329545" duration="36777000" />
     </task>
     <servers />
   </component>
@@ -397,7 +394,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/helpjoydecide$Logger.coverage" NAME="Logger Coverage Results" MODIFIED="1680590996446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/helpjoydecide$main.coverage" NAME="main Coverage Results" MODIFIED="1680632781486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/helpjoydecide$main.coverage" NAME="main Coverage Results" MODIFIED="1680633813435" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/HelpJoyMakeDecisions$mask.coverage" NAME="mask Coverage Results" MODIFIED="1680293075440" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/helpjoydecide$triangle.coverage" NAME="create_images Coverage Results" MODIFIED="1680608547893" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/HelpJoyMakeDecisions$spike.coverage" NAME="SpinnerGifMaker Coverage Results" MODIFIED="1680335329486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

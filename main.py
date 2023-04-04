@@ -1,15 +1,8 @@
 import html
-import io
 import json
-import math
-import random
-import time
 import traceback
-from io import BytesIO
 
 import telegram
-from PIL import Image, ImageDraw, ImageFont
-
 from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import ApplicationBuilder

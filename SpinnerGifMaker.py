@@ -13,7 +13,7 @@ RADIUS = 225
 DIAMETER = RADIUS * 2
 CENTER_CIRCLE_RADIUS = 100
 NUM_SPIN_FRAMES = 100
-NUM_BLINK_FRAMES = 20
+NUM_BLINK_FRAMES = 50
 NUM_TOTAL_FRAMES = NUM_SPIN_FRAMES + NUM_BLINK_FRAMES
 DURATIONS = [1000, 300, 200, 130, 80, 60, 40, 30, 25, 20] \
             + [20 for _ in range(NUM_SPIN_FRAMES - 20)] + [20, 25, 30, 40, 60, 80, 130, 200, 300, 1000] \
@@ -64,7 +64,6 @@ class SpinnerGifMaker:
         for i in range(NUM_TOTAL_FRAMES):
             frame = self.getSpinnerFrame(i)
             frame_list.append(frame)
-        print(len(frame_list))
         frame_list[0].save('spinner.gif', format='GIF', append_images=frame_list[1:], save_all=True,
                            duration=DURATIONS, disposal=2, loop=0)
 
