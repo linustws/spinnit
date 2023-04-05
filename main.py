@@ -44,7 +44,7 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 
     # Finally, send the message
     await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="Oops, something went wrong! Please try again later.")
+                                   text="nani?? something went wrong! come back ltr bah")
     await context.bot.send_message(
         chat_id=DEVELOPER_CHAT_ID, text=message, parse_mode=ParseMode.HTML
     )
@@ -53,7 +53,7 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /start command")
     await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="hamou~ type /help to see available commands")
+                                   text="hamou~ enter /help to see available commands")
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -87,9 +87,9 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
     except telegram.error.RetryAfter as e:
         main_logger.log('warning', "Telegram API rate limit exceeded!")
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="ps i cnt think rn")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="ps i cnt think rn, come back ltr bah")
     except ValueError as e:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="too many options!")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="too many optionsss")
 
 
 if __name__ == '__main__':

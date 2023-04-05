@@ -1,4 +1,5 @@
 import math
+import os
 import random
 
 from PIL import Image
@@ -45,8 +46,14 @@ class SpinnerGifMaker:
         random.shuffle(options)
         self.options = options
         # must be 200 x 200
-        self.center_circle_cover_img = Image.open("images/cat.png")
-        self.center_circle_img = Image.open("images/joy1.png")
+        self.center_circle_cover_img = Image.open("images/cover/cat.png")
+        folder_path = "images/"
+        file_list = os.listdir(folder_path)
+        image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
+        random_image = random.choice(image_list)
+        image_path = os.path.join(folder_path, random_image)
+        self.center_circle_img = Image.open(image_path).resize((200, 200))
+        # self.center_circle_img = Image.open("images/joy_jc.png")
         self.colors = random.sample(PASTEL_COLORS, len(options))
         first_half = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + [i * -150 - 150 for i in
                                                                         range(int((NUM_SPIN_FRAMES - 20) / 2))]
@@ -70,6 +77,7 @@ class SpinnerGifMaker:
     def getSpinnerFrame(self, frame_number):
 
         spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
+        # line of code that causing issue
         spinner_img.putalpha(MASK_IMG)
         # Add color pie slices
         spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')
@@ -137,7 +145,7 @@ class SpinnerGifMaker:
         spinner_img.paste(center_circle_img, (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), center_circle_img)
-
+        # comment out to see the difference easier
         spinner_img.paste(center_circle_cover_img, (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), center_circle_cover_img)
