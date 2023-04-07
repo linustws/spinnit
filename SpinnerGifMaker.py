@@ -22,12 +22,14 @@ DURATIONS = [1000, 300, 200, 130, 80, 60, 40, 30, 25, 20] \
 try:
     MASK_IMG = Image.open('mask.png')
     CENTER_CIRCLE_MASK_IMG = Image.open('center_circle_mask.png')
+    CIRCLE_OUTLINE_IMG = Image.open('circle_outline.png')
     CENTER_CIRCLE_OUTLINE_IMG = Image.open('center_circle_outline.png')
     TRIANGLE_IMG = Image.open('triangle.png')
 except FileNotFoundError as e:
     create_images(DIMENSIONS, CENTER, RADIUS, CENTER_CIRCLE_RADIUS)
     MASK_IMG = Image.open('mask.png')
     CENTER_CIRCLE_MASK_IMG = Image.open('center_circle_mask.png')
+    CIRCLE_OUTLINE_IMG = Image.open('circle_outline.png')
     CENTER_CIRCLE_OUTLINE_IMG = Image.open('center_circle_outline.png')
     TRIANGLE_IMG = Image.open('triangle.png')
 PASTEL_COLORS = [(220, 214, 255), (214, 240, 255), (222, 255, 239), (255, 250, 240), (255, 237, 237),
@@ -47,13 +49,13 @@ class SpinnerGifMaker:
         self.options = options
         # must be 200 x 200
         self.center_circle_cover_img = Image.open("images/cover/cat.png")
-        folder_path = "images/"
+        folder_path = "images/joy"
         file_list = os.listdir(folder_path)
         image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
         random_image = random.choice(image_list)
         image_path = os.path.join(folder_path, random_image)
         self.center_circle_img = Image.open(image_path).resize((200, 200))
-        # self.center_circle_img = Image.open("images/joy_jc.png")
+        # self.center_circle_img = Image.open("images/joy/joy_jc.png")
         self.colors = random.sample(PASTEL_COLORS, len(options))
         first_half = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + [i * -150 - 150 for i in
                                                                         range(int((NUM_SPIN_FRAMES - 20) / 2))]
@@ -75,10 +77,10 @@ class SpinnerGifMaker:
                            duration=DURATIONS, disposal=2, loop=0)
 
     def getSpinnerFrame(self, frame_number):
-
+        bg_img = Image.open("images/bg/strawberry.png")
         spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
         # line of code that causing issue
-        spinner_img.putalpha(MASK_IMG)
+        # spinner_img.putalpha(MASK_IMG)
         # Add color pie slices
         spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')
         num_sectors = len(self.options)
@@ -122,11 +124,17 @@ class SpinnerGifMaker:
             spinner_img = spinner_img.rotate(self.sector_angles[-1], center=CENTER)
             center_circle_cover_img = center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
             center_circle_img = center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
-        # Add blink effect to triangle image on last frame
-        if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
-            spinner_img.paste(TRIANGLE_IMG, mask=TRIANGLE_IMG)
 
-        center_circle_img.putalpha(CENTER_CIRCLE_MASK_IMG)
+        bg_img.paste(spinner_img, (0, 0), MASK_IMG)
+        bg_img.paste(CIRCLE_OUTLINE_IMG, (int((DIMENSIONS[0] - RADIUS * 2) / 2),
+                     int((DIMENSIONS[1] - RADIUS * 2) /
+                         2)), CIRCLE_OUTLINE_IMG)
+
+        # center_circle_img.putalpha(CENTER_CIRCLE_MASK_IMG)
+
+        bg_img.paste(center_circle_img, (
+            int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
+                                                                     2)), CENTER_CIRCLE_MASK_IMG)
 
         # center circle cover mask
         center_circle_cover_mask_size = (CENTER_CIRCLE_RADIUS * 2, CENTER_CIRCLE_RADIUS * 2)
@@ -140,21 +148,22 @@ class SpinnerGifMaker:
             fill = int((NUM_TOTAL_FRAMES - frame_number) / NUM_TOTAL_FRAMES * 255)
         center_circle_cover_mask_draw.ellipse((0, 0) + center_circle_cover_mask_size, fill=fill)
 
-        center_circle_cover_img.putalpha(center_circle_cover_mask_img)
+        # center_circle_cover_img.putalpha(center_circle_cover_mask_img)
 
-        spinner_img.paste(center_circle_img, (
-            int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
-                                                                     2)), center_circle_img)
         # comment out to see the difference easier
-        spinner_img.paste(center_circle_cover_img, (
+        bg_img.paste(center_circle_cover_img, (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
-                                                                     2)), center_circle_cover_img)
+                                                                     2)), center_circle_cover_mask_img)
 
-        spinner_img.paste(CENTER_CIRCLE_OUTLINE_IMG, (
+        bg_img.paste(CENTER_CIRCLE_OUTLINE_IMG, (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), CENTER_CIRCLE_OUTLINE_IMG)
 
-        return spinner_img
+        # Add blink effect to triangle image on last frame
+        if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
+            bg_img.paste(TRIANGLE_IMG, mask=TRIANGLE_IMG)
+
+        return bg_img
 
 
 # SpinnerGifMaker(["hi", "play", "sleep", "run", "dance", "eat", "fly", "study"])

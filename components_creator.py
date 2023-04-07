@@ -17,6 +17,13 @@ def create_images(spinner_dimensions, spinner_center, spinner_radius, center_cir
     center_circle_mask_draw.ellipse((0, 0) + center_circle_mask_size, fill=255)
     center_circle_mask_img.save('center_circle_mask.png')
 
+    # circle outline
+    circle_outline_img = Image.new('RGBA', spinner_dimensions, (0, 0, 0, 0))
+    circle_outline_draw = ImageDraw.Draw(circle_outline_img)
+    circle_outline_draw.ellipse((0, 0) + (spinner_radius * 2, spinner_radius * 2),
+                                fill=None, outline='black')
+    circle_outline_img.save('circle_outline.png')
+
     # center circle outline
     center_circle_outline_img = Image.new('RGBA', spinner_dimensions, (0, 0, 0, 0))
     center_circle_outline_draw = ImageDraw.Draw(center_circle_outline_img)

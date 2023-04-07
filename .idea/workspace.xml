@@ -5,13 +5,42 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="306418b6-67b0-450c-a90f-c13eda29700f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/images/bg/strawberry.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SpinnerGifMaker.py" beforeDir="false" afterPath="$PROJECT_DIR$/SpinnerGifMaker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/center_circle_outline.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components_creator.py" beforeDir="false" afterPath="$PROJECT_DIR$/components_creator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/helpJoyDecide.log" beforeDir="false" afterPath="$PROJECT_DIR$/helpJoyDecide.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/cat.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/joy1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/joy2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/1_year_ani.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/1_year_ani.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/after_du.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/after_du.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/arts_night.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/arts_night.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/bokchoy.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/bokchoy.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/bread_flying.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/bread_flying.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/christmas_wonderland.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/christmas_wonderland.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/dino.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/dino.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/eat_beancurd.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/eat_beancurd.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/joy_bed.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/joy_bed.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/joy_jc.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/joy_jc.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/joy_korea.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/joy_korea.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/joy_pout.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/joy_pout.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/joy_reaching.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/joy_reaching.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/joy_smile_work.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/joy_smile_work.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/joy_tiktok.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/joy_tiktok.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/kitkat.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/kitkat.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/kuromi.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/kuromi.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/lotte_world.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/lotte_world.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/lotte_world_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/lotte_world_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/merry_go_round.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/merry_go_round.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/painting.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/painting.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/plane.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/plane.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/pochita.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/pochita.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/snowman.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/snowman.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/strawberry_running.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/strawberry_running.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/yonsei.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/joy/yonsei.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mask.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spike.py" beforeDir="false" afterPath="$PROJECT_DIR$/spike.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spike_output.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spike_output.png" beforeDir="false" afterPath="$PROJECT_DIR$/spike_output.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/spinner.gif" beforeDir="false" afterPath="$PROJECT_DIR$/spinner.gif" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,7 +62,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/linustws/Desktop/helpjoydecide/images",
+    "last_opened_file_path": "/Users/linustws/Desktop/helpjoydecide",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -48,11 +77,12 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/images/joy" />
       <recent name="$PROJECT_DIR$/images/cover" />
       <recent name="$PROJECT_DIR$/images" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.SpinnerGifMaker">
     <configuration name="SpinnerGifMaker" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="helpjoydecide" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -192,9 +222,9 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main" />
         <item itemvalue="Python.SpinnerGifMaker" />
         <item itemvalue="Python.spike" />
+        <item itemvalue="Python.main" />
         <item itemvalue="Python.components_creator" />
         <item itemvalue="Python.mask" />
       </list>
@@ -216,7 +246,8 @@
       <workItem from="1680592457547" duration="71000" />
       <workItem from="1680592607804" duration="710000" />
       <workItem from="1680593329545" duration="38357000" />
-      <workItem from="1680711582879" duration="13617000" />
+      <workItem from="1680711582879" duration="13989000" />
+      <workItem from="1680858077973" duration="20500000" />
     </task>
     <servers />
   </component>
@@ -248,16 +279,16 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/helpjoydecide$Logger.coverage" NAME="Logger Coverage Results" MODIFIED="1680590996446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/helpjoydecide$main.coverage" NAME="main Coverage Results" MODIFIED="1680727988572" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/helpjoydecide$main.coverage" NAME="main Coverage Results" MODIFIED="1680879366897" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/HelpJoyMakeDecisions$mask.coverage" NAME="mask Coverage Results" MODIFIED="1680293075440" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/helpjoydecide$triangle.coverage" NAME="create_images Coverage Results" MODIFIED="1680608547893" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/HelpJoyMakeDecisions$spike.coverage" NAME="SpinnerGifMaker Coverage Results" MODIFIED="1680335329486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/helpjoydecide$mask.coverage" NAME="mask Coverage Results" MODIFIED="1680597690115" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/helpjoydecide$spike.coverage" NAME="spike Coverage Results" MODIFIED="1680723316508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/helpjoydecide$spike.coverage" NAME="spike Coverage Results" MODIFIED="1680879543981" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/HelpJoyMakeDecisions$triangle.coverage" NAME="triangle Coverage Results" MODIFIED="1680293110581" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/helpjoydecide$spinner_center.coverage" NAME="spinner_center Coverage Results" MODIFIED="1680597126771" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/HelpJoyMakeDecisions$main.coverage" NAME="main Coverage Results" MODIFIED="1680431246088" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/HelpJoyMakeDecisions$spinwheelcenter.coverage" NAME="spinner_center Coverage Results" MODIFIED="1680293106620" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/helpjoydecide$SpinnerGifMaker.coverage" NAME="SpinnerGifMaker Coverage Results" MODIFIED="1680726869095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/helpjoydecide$SpinnerGifMaker.coverage" NAME="SpinnerGifMaker Coverage Results" MODIFIED="1680891255393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
