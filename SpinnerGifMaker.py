@@ -16,9 +16,12 @@ CENTER_CIRCLE_RADIUS = 100
 NUM_SPIN_FRAMES = 100
 NUM_BLINK_FRAMES = 50
 NUM_TOTAL_FRAMES = NUM_SPIN_FRAMES + NUM_BLINK_FRAMES
+# frame durations
 DURATIONS = [1000, 300, 200, 130, 80, 60, 40, 30, 25, 20] \
             + [20 for _ in range(NUM_SPIN_FRAMES - 20)] + [20, 25, 30, 40, 60, 80, 130, 200, 300, 1000] \
             + [100 for _ in range(NUM_BLINK_FRAMES)]  # Fastest 20
+
+# import components
 try:
     MASK_IMG = Image.open('mask.png')
     CENTER_CIRCLE_MASK_IMG = Image.open('center_circle_mask.png')
@@ -47,7 +50,7 @@ class SpinnerGifMaker:
     def __init__(self, options):
         random.shuffle(options)
         self.options = options
-        # must be 200 x 200
+        # 200 x 200 pic
         self.center_circle_cover_img = Image.open("images/cover/cat.png")
         folder_path = "images/joy"
         file_list = os.listdir(folder_path)
@@ -62,6 +65,7 @@ class SpinnerGifMaker:
         second_half = [i * -150 + 6000 for i in range(int((NUM_SPIN_FRAMES - 20) / 2))] + [100, 70, 50, 30, 20, 15,
                                                                                            10, 5, 2, 0]
         angles = first_half + second_half
+        # start and end at unpredictable positions
         start_offset = random.randint(0, 359)
         end_offset = random.randint(0, 359)
         sector_first_half = [angle - start_offset for angle in angles[:50]]
@@ -79,8 +83,6 @@ class SpinnerGifMaker:
     def getSpinnerFrame(self, frame_number):
         bg_img = Image.open("images/bg/strawberry.png")
         spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
-        # line of code that causing issue
-        # spinner_img.putalpha(MASK_IMG)
         # Add color pie slices
         spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')
         num_sectors = len(self.options)
@@ -89,6 +91,7 @@ class SpinnerGifMaker:
             end_angle = (i + 1) * (360 / num_sectors)
             color = self.colors[i]
             fill = (255,)
+            #draw pie slices
             spinner_draw.pieslice(xy=((CENTER[0] - RADIUS, CENTER[1] - RADIUS), (CENTER[0] + RADIUS, CENTER[1] +
                                                                                  RADIUS)),
                                   start=start_angle,
@@ -126,17 +129,17 @@ class SpinnerGifMaker:
             center_circle_img = center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
 
         bg_img.paste(spinner_img, (0, 0), MASK_IMG)
+
+        # created outline image cos the spinner outline is quite wonky
         bg_img.paste(CIRCLE_OUTLINE_IMG, (int((DIMENSIONS[0] - RADIUS * 2) / 2),
                      int((DIMENSIONS[1] - RADIUS * 2) /
                          2)), CIRCLE_OUTLINE_IMG)
-
-        # center_circle_img.putalpha(CENTER_CIRCLE_MASK_IMG)
 
         bg_img.paste(center_circle_img, (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), CENTER_CIRCLE_MASK_IMG)
 
-        # center circle cover mask
+        # center circle cover mask that decreases in opacity
         center_circle_cover_mask_size = (CENTER_CIRCLE_RADIUS * 2, CENTER_CIRCLE_RADIUS * 2)
         center_circle_cover_mask_img = Image.new('L', center_circle_cover_mask_size, color=0)
         center_circle_cover_mask_draw = ImageDraw.Draw(center_circle_cover_mask_img)
@@ -148,13 +151,12 @@ class SpinnerGifMaker:
             fill = int((NUM_TOTAL_FRAMES - frame_number) / NUM_TOTAL_FRAMES * 255)
         center_circle_cover_mask_draw.ellipse((0, 0) + center_circle_cover_mask_size, fill=fill)
 
-        # center_circle_cover_img.putalpha(center_circle_cover_mask_img)
-
-        # comment out to see the difference easier
+        # comment out to see without the cover image
         bg_img.paste(center_circle_cover_img, (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), center_circle_cover_mask_img)
 
+        # created outline image cos no center circle outline
         bg_img.paste(CENTER_CIRCLE_OUTLINE_IMG, (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), CENTER_CIRCLE_OUTLINE_IMG)
