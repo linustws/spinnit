@@ -46,7 +46,7 @@ PASTEL_COLORS = [(220, 214, 255), (214, 240, 255), (222, 255, 239), (255, 250, 2
                  (247, 206, 118), (140, 115, 134), (156, 147, 89), (165, 114, 131), (232, 213, 149)]
 
 
-class SpinnerGifMakerTest:
+class SpinnerGifMaker:
 
     def __init__(self, options):
         start = time.time()
@@ -80,13 +80,30 @@ class SpinnerGifMakerTest:
             print(f"frame {i}")
             frame = self.getSpinnerFrame(i)
             frame_list.append(frame)
-        frame_list[0].save('spinner.gif', format='GIF', append_images=frame_list[1:], save_all=True,
+        frame_list[0].save('test.gif', format='GIF', append_images=frame_list[1:], save_all=True,
                            duration=DURATIONS, disposal=2, loop=0)
         end = time.time()
         print(f"time taken: {end - start} seconds")
 
+    def paste(self, bg_img, im, box=None, mask=None):
+        # To combine one P image with another
+        # add all of the new colors to the palette of the first image
+        remap = {}
+        for color, i in im.palette.colors.items():
+            remap[i] = bg_img.palette.getcolor(color)
+        # then update the palette indexes in the new image
+        for x in range(im.width):
+            for y in range(im.height):
+                im.putpixel((x, y), remap[im.getpixel((x, y))])
+        # and paste
+        bg_img.paste(im, box, mask)
+
+        # Return the number of free colors left
+        return 256 - len(bg_img.palette.colors)
+
     def getSpinnerFrame(self, frame_number):
-        bg_img = Image.open("images/bg/strawberry.png")
+        # 16 colors
+        bg_img = Image.open("images/bg/strawberry.png").convert("RGB").quantize(16)
         spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
         # Add color pie slices
         spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')
@@ -96,7 +113,7 @@ class SpinnerGifMakerTest:
             end_angle = (i + 1) * (360 / num_sectors)
             color = self.colors[i]
             fill = (255,)
-            #draw pie slices
+            # draw pie slices
             spinner_draw.pieslice(xy=((CENTER[0] - RADIUS, CENTER[1] - RADIUS), (CENTER[0] + RADIUS, CENTER[1] +
                                                                                  RADIUS)),
                                   start=start_angle,
@@ -133,16 +150,14 @@ class SpinnerGifMakerTest:
             center_circle_cover_img = center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
             center_circle_img = center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
 
-        bg_img.paste(spinner_img, (0, 0), MASK_IMG)
+        # 10 colors
+        self.paste(bg_img, spinner_img.quantize(10), (0, 0), MASK_IMG)
 
         # created outline image cos the spinner outline is quite wonky
-        bg_img.paste(CIRCLE_OUTLINE_IMG, (int((DIMENSIONS[0] - RADIUS * 2) / 2),
-                     int((DIMENSIONS[1] - RADIUS * 2) /
-                         2)), CIRCLE_OUTLINE_IMG)
-
-        bg_img.paste(center_circle_img, (
-            int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
-                                                                     2)), CENTER_CIRCLE_MASK_IMG)
+        colors_left = self.paste(bg_img, CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2),
+                                 (int((DIMENSIONS[0] - RADIUS * 2) / 2),
+                                  int((DIMENSIONS[1] - RADIUS * 2) /
+                                      2)), CIRCLE_OUTLINE_IMG)
 
         # center circle cover mask that decreases in opacity
         center_circle_cover_mask_size = (CENTER_CIRCLE_RADIUS * 2, CENTER_CIRCLE_RADIUS * 2)
@@ -157,20 +172,25 @@ class SpinnerGifMakerTest:
         center_circle_cover_mask_draw.ellipse((0, 0) + center_circle_cover_mask_size, fill=fill)
 
         # comment out to see without the cover image
-        bg_img.paste(center_circle_cover_img, (
+        center_circle_img.paste(center_circle_cover_img, mask=center_circle_cover_mask_img)
+
+        if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
+            colors_left -= 1
+        self.paste(bg_img, center_circle_img.convert("RGB").quantize(colors_left), (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
-                                                                     2)), center_circle_cover_mask_img)
+                                                                     2)), CENTER_CIRCLE_MASK_IMG)
 
         # created outline image cos no center circle outline
-        bg_img.paste(CENTER_CIRCLE_OUTLINE_IMG, (
+        self.paste(bg_img, CENTER_CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2), (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), CENTER_CIRCLE_OUTLINE_IMG)
 
         # Add blink effect to triangle image on last frame
         if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
-            bg_img.paste(TRIANGLE_IMG, mask=TRIANGLE_IMG)
+            self.paste(bg_img, TRIANGLE_IMG.convert("RGB").quantize(2), mask=TRIANGLE_IMG)
 
         return bg_img
 
 
-SpinnerGifMakerTest(["hi", "play", "sleep", "run", "dance", "eat", "fly", "study"])
+# for testing
+SpinnerGifMaker(["hi", "play", "sleep", "run", "dance", "eat", "fly", "study"])
