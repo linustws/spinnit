@@ -103,11 +103,10 @@ class SpinnerGifMaker:
         for start_frame, frame in results:
             # print(f"sorted {start_frame}")
             frame_list += frame
-        gif_path = "spinner.gif"
-        frame_list[0].save(gif_path, format="GIF", append_images=frame_list[1:], save_all=True,
+        frame_list[0].save('spinner.gif', format="GIF", append_images=frame_list[1:], save_all=True,
                            duration=DURATIONS, disposal=2, loop=0)
         end = time.time()
-        print(f"time taken mp: {end - start} seconds")
+        # print(f"time taken mp: {end - start} seconds")
 
     def paste(self, bg_img, im, box=None, mask=None):
         # To combine one P image with another,
