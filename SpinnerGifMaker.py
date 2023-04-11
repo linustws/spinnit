@@ -1,6 +1,8 @@
 import math
 import os
 import random
+import time
+import multiprocessing as mp
 
 from PIL import Image
 from PIL import ImageDraw
@@ -16,12 +18,12 @@ CENTER_CIRCLE_RADIUS = 100
 NUM_SPIN_FRAMES = 100
 NUM_BLINK_FRAMES = 50
 NUM_TOTAL_FRAMES = NUM_SPIN_FRAMES + NUM_BLINK_FRAMES
-# frame durations
+# Frame durations
 DURATIONS = [1000, 300, 200, 130, 80, 60, 40, 30, 25, 20] \
             + [20 for _ in range(NUM_SPIN_FRAMES - 20)] + [20, 25, 30, 40, 60, 80, 130, 200, 300, 1000] \
             + [100 for _ in range(NUM_BLINK_FRAMES)]  # Fastest 20
 
-# import components
+# Import components
 try:
     MASK_IMG = Image.open('mask.png')
     CENTER_CIRCLE_MASK_IMG = Image.open('center_circle_mask.png')
@@ -48,6 +50,7 @@ PASTEL_COLORS = [(220, 214, 255), (214, 240, 255), (222, 255, 239), (255, 250, 2
 class SpinnerGifMaker:
 
     def __init__(self, options):
+        start = time.time()
         random.shuffle(options)
         self.options = options
         # 200 x 200 pic
@@ -65,107 +68,157 @@ class SpinnerGifMaker:
         second_half = [i * -150 + 6000 for i in range(int((NUM_SPIN_FRAMES - 20) / 2))] + [100, 70, 50, 30, 20, 15,
                                                                                            10, 5, 2, 0]
         angles = first_half + second_half
-        # start and end at unpredictable positions
+        # Start and end at unpredictable positions
         start_offset = random.randint(0, 359)
         end_offset = random.randint(0, 359)
         sector_first_half = [angle - start_offset for angle in angles[:50]]
         sector_second_half = [angle - end_offset for angle in angles[50:]]
         self.sector_angles = sector_first_half + sector_second_half
         self.image_angles = angles
+        self.frame_queue = mp.Queue()
 
+        # Multiprocessing
+        num_cpus = mp.cpu_count()
+        frames_per_cpu = NUM_TOTAL_FRAMES // num_cpus
+        for i in range(num_cpus):
+            start_frame = i * frames_per_cpu
+            end_frame = start_frame + frames_per_cpu
+            if i == num_cpus - 1:
+                end_frame = NUM_TOTAL_FRAMES
+            p = mp.Process(target=self.getSpinnerFrame, args=(start_frame, end_frame))
+            p.start()
+
+        # Retrieve frame lists from the queue and append them to the frame list
+        results = []
+        for i in range(mp.cpu_count()):
+            result, start_frame = self.frame_queue.get()
+            # print(f"unsorted {start_frame}")
+            results.append((start_frame, result))
+
+        # Sort results by their assigned index
+        results.sort()
+
+        # Combine the frame_lists in the correct order
         frame_list = []
-        for i in range(NUM_TOTAL_FRAMES):
-            frame = self.getSpinnerFrame(i)
-            frame_list.append(frame)
-        frame_list[0].save('spinner.gif', format='GIF', append_images=frame_list[1:], save_all=True,
+        for start_frame, frame in results:
+            # print(f"sorted {start_frame}")
+            frame_list += frame
+        frame_list[0].save('spinner.gif', format="GIF", append_images=frame_list[1:], save_all=True,
                            duration=DURATIONS, disposal=2, loop=0)
+        end = time.time()
+        # print(f"time taken mp: {end - start} seconds")
 
-    def getSpinnerFrame(self, frame_number):
-        bg_img = Image.open("images/bg/strawberry.png")
-        spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
-        # Add color pie slices
-        spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')
-        num_sectors = len(self.options)
-        for i, option in enumerate(self.options):
-            start_angle = i * (360 / num_sectors)
-            end_angle = (i + 1) * (360 / num_sectors)
-            color = self.colors[i]
-            fill = (255,)
-            #draw pie slices
-            spinner_draw.pieslice(xy=((CENTER[0] - RADIUS, CENTER[1] - RADIUS), (CENTER[0] + RADIUS, CENTER[1] +
-                                                                                 RADIUS)),
-                                  start=start_angle,
-                                  end=end_angle, fill=color + fill, outline='black')
+    def paste(self, bg_img, im, box=None, mask=None):
+        # To combine one P image with another,
+        # add all of the new colors to the palette of the first image
+        remap = [0] * 256
+        for color, i in im.palette.colors.items():
+            remap[i] = bg_img.palette.getcolor(color)
+        # then update the palette indexes in the new image
+        im = im.point(remap)
+        # and paste
+        bg_img.paste(im, box, mask)
 
-            # Add text options
-            font = ImageFont.truetype("arial.ttf", 30)
-            _, _, text_width, text_height = spinner_draw.textbbox((0, 0), option, font=font, anchor="lt")
-            sector_center_angle = (start_angle + end_angle) / 2
-            sector_center_x = CENTER[0] + (RADIUS + CENTER_CIRCLE_RADIUS) * 0.5 * math.cos(sector_center_angle *
-                                                                                           math.pi / 180)
-            sector_center_y = CENTER[1] + (RADIUS + CENTER_CIRCLE_RADIUS) * 0.5 * math.sin(sector_center_angle *
-                                                                                           math.pi / 180)
-            text_angle = 180 - sector_center_angle
-            text_img = Image.new('RGBA', (text_width, text_height), color=(0, 0, 0, 0))
-            text_draw = ImageDraw.Draw(text_img)
-            text_draw.text((0, 0), option, fill=(0, 0, 0), font=font, anchor="lt")
-            text_img = text_img.rotate(text_angle, expand=True)
-            text_width, text_height = text_img.size
-            text_center_x = sector_center_x - text_width / 2
-            text_center_y = sector_center_y - text_height / 2
-            spinner_img.paste(text_img, (int(text_center_x), int(text_center_y)), text_img)
+        # Return the number of free colors left
+        return 256 - len(bg_img.palette.colors)
 
-        center_circle_cover_img = self.center_circle_cover_img.copy()
-        center_circle_img = self.center_circle_img.copy()
-        # Rotate
-        if frame_number < NUM_SPIN_FRAMES:
-            spinner_img = spinner_img.rotate(self.sector_angles[frame_number], center=CENTER)
-            center_circle_cover_img = center_circle_cover_img.rotate(self.image_angles[frame_number], center=(100, 100))
-            center_circle_img = center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
-        # Stop rotation
-        else:
-            spinner_img = spinner_img.rotate(self.sector_angles[-1], center=CENTER)
-            center_circle_cover_img = center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
-            center_circle_img = center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
+    def getSpinnerFrame(self, start_frame, end_frame):
+        frame_list = []
+        for i in range(start_frame, end_frame):
+            # 16 colors works
+            # print(len(Image.open("images/bg/strawberry.png").convert("P").getcolors()))
+            bg_img = Image.open("images/bg/strawberry.png").convert("RGB").quantize(16)
+            spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
+            # Add color pie slices
+            spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')
+            num_sectors = len(self.options)
+            for j, option in enumerate(self.options):
+                start_angle = j * (360 / num_sectors)
+                end_angle = (j + 1) * (360 / num_sectors)
+                color = self.colors[j]
+                fill = (255,)
+                # Draw pie slices
+                spinner_draw.pieslice(xy=((CENTER[0] - RADIUS, CENTER[1] - RADIUS), (CENTER[0] + RADIUS, CENTER[1] +
+                                                                                     RADIUS)),
+                                      start=start_angle,
+                                      end=end_angle, fill=color + fill, outline='black')
 
-        bg_img.paste(spinner_img, (0, 0), MASK_IMG)
+                # Add text options
+                font = ImageFont.truetype("arial.ttf", 30)
+                _, _, text_width, text_height = spinner_draw.textbbox((0, 0), option, font=font, anchor="lt")
+                sector_center_angle = (start_angle + end_angle) / 2
+                sector_center_x = CENTER[0] + (RADIUS + CENTER_CIRCLE_RADIUS) * 0.5 * math.cos(sector_center_angle *
+                                                                                               math.pi / 180)
+                sector_center_y = CENTER[1] + (RADIUS + CENTER_CIRCLE_RADIUS) * 0.5 * math.sin(sector_center_angle *
+                                                                                               math.pi / 180)
+                text_angle = 180 - sector_center_angle
+                text_img = Image.new('RGBA', (text_width, text_height), color=(0, 0, 0, 0))
+                text_draw = ImageDraw.Draw(text_img)
+                text_draw.text((0, 0), option, fill=(0, 0, 0), font=font, anchor="lt")
+                text_img = text_img.rotate(text_angle, expand=True)
+                text_width, text_height = text_img.size
+                text_center_x = sector_center_x - text_width / 2
+                text_center_y = sector_center_y - text_height / 2
+                spinner_img.paste(text_img, (int(text_center_x), int(text_center_y)), text_img)
 
-        # created outline image cos the spinner outline is quite wonky
-        bg_img.paste(CIRCLE_OUTLINE_IMG, (int((DIMENSIONS[0] - RADIUS * 2) / 2),
-                     int((DIMENSIONS[1] - RADIUS * 2) /
-                         2)), CIRCLE_OUTLINE_IMG)
+            center_circle_cover_img = self.center_circle_cover_img.copy()
+            center_circle_img = self.center_circle_img.copy()
+            # Rotate
+            if i < NUM_SPIN_FRAMES:
+                spinner_img = spinner_img.rotate(self.sector_angles[i], center=CENTER)
+                center_circle_cover_img = center_circle_cover_img.rotate(self.image_angles[i], center=(100, 100))
+                center_circle_img = center_circle_img.rotate(self.image_angles[i], center=(100, 100))
+            # Stop rotation
+            else:
+                spinner_img = spinner_img.rotate(self.sector_angles[-1], center=CENTER)
+                center_circle_cover_img = center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
+                center_circle_img = center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
 
-        bg_img.paste(center_circle_img, (
-            int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
-                                                                     2)), CENTER_CIRCLE_MASK_IMG)
+            # 10 colors
+            self.paste(bg_img, spinner_img.quantize(10), (0, 0), MASK_IMG)
 
-        # center circle cover mask that decreases in opacity
-        center_circle_cover_mask_size = (CENTER_CIRCLE_RADIUS * 2, CENTER_CIRCLE_RADIUS * 2)
-        center_circle_cover_mask_img = Image.new('L', center_circle_cover_mask_size, color=0)
-        center_circle_cover_mask_draw = ImageDraw.Draw(center_circle_cover_mask_img)
-        if frame_number < 40:
-            fill = 255
-        elif frame_number >= 60:
-            fill = 0
-        else:
-            fill = int((NUM_TOTAL_FRAMES - frame_number) / NUM_TOTAL_FRAMES * 255)
-        center_circle_cover_mask_draw.ellipse((0, 0) + center_circle_cover_mask_size, fill=fill)
+            # Created outline image cos the spinner outline is quite wonky
+            colors_left = self.paste(bg_img, CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2),
+                                     (int((DIMENSIONS[0] - RADIUS * 2) / 2),
+                                      int((DIMENSIONS[1] - RADIUS * 2) /
+                                          2)), CIRCLE_OUTLINE_IMG)
 
-        # comment out to see without the cover image
-        bg_img.paste(center_circle_cover_img, (
-            int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
-                                                                     2)), center_circle_cover_mask_img)
+            # Center circle cover mask that decreases in opacity
+            center_circle_cover_mask_size = (CENTER_CIRCLE_RADIUS * 2, CENTER_CIRCLE_RADIUS * 2)
+            center_circle_cover_mask_img = Image.new('L', center_circle_cover_mask_size, color=0)
+            center_circle_cover_mask_draw = ImageDraw.Draw(center_circle_cover_mask_img)
+            if i < 40:
+                fill = 255
+            elif i >= 60:
+                fill = 0
+            else:
+                fill = int((NUM_TOTAL_FRAMES - i) / NUM_TOTAL_FRAMES * 255)
+            center_circle_cover_mask_draw.ellipse((0, 0) + center_circle_cover_mask_size, fill=fill)
 
-        # created outline image cos no center circle outline
-        bg_img.paste(CENTER_CIRCLE_OUTLINE_IMG, (
-            int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
-                                                                     2)), CENTER_CIRCLE_OUTLINE_IMG)
+            # Comment out to see without the cover image
+            center_circle_img.paste(center_circle_cover_img, mask=center_circle_cover_mask_img)
 
-        # Add blink effect to triangle image on last frame
-        if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
-            bg_img.paste(TRIANGLE_IMG, mask=TRIANGLE_IMG)
+            if i < NUM_SPIN_FRAMES or i % 2 == 1:
+                colors_left -= 1
+            self.paste(bg_img, center_circle_img.convert("RGB").quantize(colors_left), (
+                int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
+                                                                         2)), CENTER_CIRCLE_MASK_IMG)
 
-        return bg_img
+            # Created outline image cos no center circle outline
+            self.paste(bg_img, CENTER_CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2), (
+                int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
+                                                                         2)), CENTER_CIRCLE_OUTLINE_IMG)
+
+            # Add blink effect to triangle image on last frame
+            if i < NUM_SPIN_FRAMES or i % 2 == 1:
+                self.paste(bg_img, TRIANGLE_IMG.convert("RGB").quantize(2), mask=TRIANGLE_IMG)
+
+            frame_list.append(bg_img)
+
+        self.frame_queue.put((frame_list, start_frame))  # P
 
 
-# SpinnerGifMaker(["hi", "play", "sleep", "run", "dance", "eat", "fly", "study"])
+if __name__ == '__main__':
+    mp.freeze_support()
+    # For testing
+    # SpinnerGifMaker(["hi", "play", "sleep", "run", "dance", "eat", "fly", "study"])
