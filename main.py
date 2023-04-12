@@ -14,8 +14,8 @@ from telegram.ext import filters
 from logger import Logger
 from spinner_gif_maker import SpinnerGifMaker
 
-telegram_logger = Logger('telegram.ext._application', 'helpJoyDecide.log')
-main_logger = Logger('main', 'helpJoyDecide.log')
+telegram_logger = Logger('telegram.ext._application', 'help_joy_decide.log')
+main_logger = Logger('main', 'help_joy_decide.log')
 
 DEVELOPER_CHAT_ID = ***REMOVED***
 
