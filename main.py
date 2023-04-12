@@ -77,19 +77,24 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /decide command")
     options = context.args
-    if not options:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="enter some options separated with "
-                                                                              "spaces after /decide")
-        return
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
-    try:
-        SpinnerGifMaker(options)
-        await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
-    except telegram.error.RetryAfter as e:
-        main_logger.log('warning', "Telegram API rate limit exceeded!")
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="ps i cnt think rn, come back ltr bah")
-    except ValueError as e:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="too many optionsss")
+    if update.effective_user.id == ***REMOVED*** or update.effective_user.id == ***REMOVED***:
+        if not options:
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="enter some options separated with "
+                                                                                  "spaces after /decide")
+            return
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
+        try:
+            SpinnerGifMaker(options)
+            await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
+        except telegram.error.RetryAfter as e:
+            main_logger.log('warning', "Telegram API rate limit exceeded!")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="ps i cnt think rn, come back ltr bah")
+        except ValueError as e:
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="too many optionsss")
+    else:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="ps this bot is made only for joy "
+                                                                              "rn 🙃 i'll release one that can be "
+                                                                              "customised soon~")
 
 
 if __name__ == '__main__':
