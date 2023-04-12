@@ -11,8 +11,8 @@ from telegram.ext import ContextTypes
 from telegram.ext import MessageHandler
 from telegram.ext import filters
 
-from Logger import Logger
-from SpinnerGifMaker import SpinnerGifMaker
+from logger import Logger
+from spinner_gif_maker import SpinnerGifMaker
 
 telegram_logger = Logger('telegram.ext._application', 'helpJoyDecide.log')
 main_logger = Logger('main', 'helpJoyDecide.log')
