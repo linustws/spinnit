@@ -105,8 +105,6 @@ if __name__ == '__main__':
     echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo_message)
     help_handler = CommandHandler('help', help_command)
     spin_handler = CommandHandler('decide', spin_command)
-    # caps_handler = CommandHandler('caps', caps_command)
-    # inline_caps_handler = InlineQueryHandler(caps_inline)
     unknown_handler = MessageHandler(filters.COMMAND, unknown_command)
 
     application.add_error_handler(error_handler)
@@ -114,8 +112,6 @@ if __name__ == '__main__':
     application.add_handler(echo_handler)
     application.add_handler(help_handler)
     application.add_handler(spin_handler)
-    # application.add_handler(caps_handler)
-    # application.add_handler(inline_caps_handler)
     application.add_handler(unknown_handler)
 
     application.run_polling()
