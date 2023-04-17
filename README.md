@@ -1,4 +1,4 @@
-# helpjoydecide
+# SpinMeBot
 
 for joy 🤍
 
