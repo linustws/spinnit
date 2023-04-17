@@ -1,7 +1,5 @@
 # SpinMeBot
 
-for joy 🤍
-
-or if you are an indecisive libra
+Need help deciding? Let me be your fate advisor although you don't have to take my advice 😝
 
 https://t.me/helpjoydecidebot
