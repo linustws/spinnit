@@ -1,5 +1,6 @@
 import html
 import json
+import time
 import traceback
 
 import telegram
@@ -75,6 +76,7 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    start = time.time()
     main_logger.log('info', f"User {update.effective_user.id} called the /decide command")
     options = context.args
     if update.effective_user.id == ***REMOVED*** or update.effective_user.id == ***REMOVED***:
@@ -86,6 +88,8 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             SpinnerGifMaker(options)
             await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
+            end = time.time()
+            await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Time taken: {end - start} seconds")
         except telegram.error.RetryAfter as e:
             main_logger.log('warning', "Telegram API rate limit exceeded!")
             await context.bot.send_message(chat_id=update.effective_chat.id, text="ps i cnt think rn, come back ltr bah")
