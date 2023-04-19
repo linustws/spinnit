@@ -37,6 +37,7 @@ except FileNotFoundError as e:
     CIRCLE_OUTLINE_IMG = Image.open('circle_outline.png')
     CENTER_CIRCLE_OUTLINE_IMG = Image.open('center_circle_outline.png')
     TRIANGLE_IMG = Image.open('triangle.png')
+# 40 colors
 PASTEL_COLORS = [(220, 214, 255), (214, 240, 255), (222, 255, 239), (255, 250, 240), (255, 237, 237),
                  (255, 222, 222), (247, 246, 207), (182, 216, 242), (244, 207, 223), (87, 132, 186),
                  (154, 200, 235), (204, 212, 191), (231, 203, 169), (238, 186, 178), (245, 243, 231),
@@ -106,7 +107,7 @@ class SpinnerGifMaker:
         frame_list[0].save('spinner.gif', format="GIF", append_images=frame_list[1:], save_all=True,
                            duration=DURATIONS, disposal=2, loop=0)
         end = time.time()
-        # print(f"time taken mp: {end - start} seconds")
+        print(f"time taken mp: {end - start} seconds")
 
     def paste(self, bg_img, im, box=None, mask=None):
         # To combine one P image with another,

@@ -1,3 +1,4 @@
+import asyncio
 import html
 import json
 import time
@@ -13,7 +14,7 @@ from telegram.ext import MessageHandler
 from telegram.ext import filters
 
 from logger import Logger
-from spinner_gif_maker import SpinnerGifMaker
+from noposturisedbutnomp import SpinnerGifMaker
 
 telegram_logger = Logger('telegram.ext._application', 'help_joy_decide.log')
 main_logger = Logger('main', 'help_joy_decide.log')
@@ -76,29 +77,34 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    start = time.time()
     main_logger.log('info', f"User {update.effective_user.id} called the /decide command")
     options = context.args
-    if update.effective_user.id == ***REMOVED*** or update.effective_user.id == ***REMOVED***:
+    allowed_ids = [***REMOVED***, ***REMOVED***]
+    if update.effective_user.id not in allowed_ids:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="ps this bot is made only for joy "
+                                                                              "rn 🙃 i'll release one that can be "
+                                                                              "customised soon~")
+    else:
         if not options:
             await context.bot.send_message(chat_id=update.effective_chat.id, text="enter some options separated with "
                                                                                   "spaces after /decide")
             return
         await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
-        try:
-            SpinnerGifMaker(options)
-            await context.bot.send_animation(chat_id=update.effective_chat.id, animation='spinner.gif')
-            end = time.time()
-            await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Time taken: {end - start} seconds")
-        except telegram.error.RetryAfter as e:
-            main_logger.log('warning', "Telegram API rate limit exceeded!")
-            await context.bot.send_message(chat_id=update.effective_chat.id, text="ps i cnt think rn, come back ltr bah")
-        except ValueError as e:
-            await context.bot.send_message(chat_id=update.effective_chat.id, text="too many optionsss")
-    else:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="ps this bot is made only for joy "
-                                                                              "rn 🙃 i'll release one that can be "
-                                                                              "customised soon~")
+        asyncio.create_task(generate_animation(options, update.effective_chat.id, context))
+
+
+async def generate_animation(options, chat_id, context):
+    start = time.time()
+    try:
+        SpinnerGifMaker(options)
+        await context.bot.send_animation(chat_id=chat_id, animation='spinner.gif')
+        end = time.time()
+        # await context.bot.send_message(chat_id=chat_id, text=f"Time taken: {end - start} seconds")
+    except telegram.error.RetryAfter as e:
+        main_logger.log('warning', "Telegram API rate limit exceeded!")
+        await context.bot.send_message(chat_id=chat_id, text="ps i cnt think rn, come back ltr bah")
+    except ValueError as e:
+        await context.bot.send_message(chat_id=chat_id, text="too many optionsss")
 
 
 if __name__ == '__main__':
