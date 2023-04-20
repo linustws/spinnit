@@ -14,7 +14,7 @@ from telegram.ext import MessageHandler
 from telegram.ext import filters
 
 from logger import Logger
-from noposturisedbutnomp import SpinnerGifMaker
+from noposturisednomp import SpinnerGifMaker
 
 telegram_logger = Logger('telegram.ext._application', 'help_joy_decide.log')
 main_logger = Logger('main', 'help_joy_decide.log')
@@ -99,7 +99,7 @@ async def generate_animation(options, chat_id, context):
         SpinnerGifMaker(options)
         await context.bot.send_animation(chat_id=chat_id, animation='spinner.gif')
         end = time.time()
-        # await context.bot.send_message(chat_id=chat_id, text=f"Time taken: {end - start} seconds")
+        await context.bot.send_message(chat_id=chat_id, text=f"Time taken: {end - start} seconds")
     except telegram.error.RetryAfter as e:
         main_logger.log('warning', "Telegram API rate limit exceeded!")
         await context.bot.send_message(chat_id=chat_id, text="ps i cnt think rn, come back ltr bah")

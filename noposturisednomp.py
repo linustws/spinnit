@@ -80,7 +80,7 @@ class SpinnerGifMaker:
             # print(f"frame {i}")
             frame = self.getSpinnerFrame(i)
             frame_list.append(frame)
-        frame_list[0].save('test.gif', format='GIF', append_images=frame_list[1:], save_all=True,
+        frame_list[0].save('spinner.gif', format='GIF', append_images=frame_list[1:], save_all=True,
                            duration=DURATIONS, disposal=2, loop=0)
         end = time.time()
         print(f"time taken no mp but with posturisation: {end - start} seconds")
