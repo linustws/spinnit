@@ -80,6 +80,8 @@ class SpinnerGifMaker:
         self.stop_spinner_img = None
         self.stop_center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
         self.stop_center_circle_img = self.center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
+        self.stop_frame_no_triangle = None
+        self.stop_frame_with_triangle = None
 
         bg_img, spinner_img = self.prepare()
         self.stop_spinner_img = spinner_img.rotate(self.spinner_angles[-1], center=CENTER)
@@ -148,6 +150,11 @@ class SpinnerGifMaker:
         return bg_img, spinner_img
 
     def getSpinnerFrame(self, bg_img, spinner_img, frame_number):
+        # Return stored stop frames
+        if self.stop_frame_no_triangle is not None and frame_number % 2 == 0:
+            return self.stop_frame_no_triangle
+        if self.stop_frame_with_triangle is not None and frame_number % 2 == 1:
+            return self.stop_frame_with_triangle
         # Rotate
         if frame_number < NUM_SPIN_FRAMES:
             spinner_img = spinner_img.rotate(self.spinner_angles[frame_number], center=CENTER)
@@ -199,6 +206,12 @@ class SpinnerGifMaker:
         # Add blink effect to triangle image on last frame
         if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
             self.paste(bg_img, TRIANGLE_IMG_QUANTIZED, mask=TRIANGLE_IMG)
+
+        # Store stop frames to avoid recomputation
+        if frame_number == NUM_SPIN_FRAMES:
+            self.stop_frame_no_triangle = bg_img
+        if frame_number == NUM_SPIN_FRAMES + 1:
+            self.stop_frame_with_triangle = bg_img
 
         return bg_img
 
