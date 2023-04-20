@@ -21,6 +21,12 @@ NUM_TOTAL_FRAMES = NUM_SPIN_FRAMES + NUM_BLINK_FRAMES
 DURATIONS = [1000, 300, 200, 130, 80, 60, 40, 30, 25, 20] \
             + [20 for _ in range(NUM_SPIN_FRAMES - 20)] + [20, 25, 30, 40, 60, 80, 130, 200, 300, 1000] \
             + [100 for _ in range(NUM_BLINK_FRAMES)]  # Fastest 20
+ANGLES = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + \
+         [i * -150 - 150 for i in range(int((NUM_SPIN_FRAMES - 20) / 2))] + \
+         [i * -150 + 6000 for i in range(int((NUM_SPIN_FRAMES - 20) / 2))] + \
+         [100, 70, 50, 30, 20, 15, 10, 5, 2, 0]
+
+CENTER_CIRCLE_COVER_IMG = Image.open("images/cover/cat.png")
 
 # import components
 try:
@@ -56,7 +62,7 @@ class SpinnerGifMaker:
         random.shuffle(options)
         self.options = options
         # 200 x 200 pic
-        self.center_circle_cover_img = Image.open("images/cover/cat.png")
+        self.center_circle_cover_img = CENTER_CIRCLE_COVER_IMG
         folder_path = "images/joy"
         file_list = os.listdir(folder_path)
         image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
@@ -65,20 +71,18 @@ class SpinnerGifMaker:
         self.center_circle_img = Image.open(image_path).resize((200, 200))
         # self.center_circle_img = Image.open("images/joy/joy_jc.png")
         self.colors = random.sample(PASTEL_COLORS, len(options))
-        first_half = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + [i * -150 - 150 for i in
-                                                                        range(int((NUM_SPIN_FRAMES - 20) / 2))]
-        second_half = [i * -150 + 6000 for i in range(int((NUM_SPIN_FRAMES - 20) / 2))] + [100, 70, 50, 30, 20, 15,
-                                                                                           10, 5, 2, 0]
-        angles = first_half + second_half
         # start and end at unpredictable positions
         start_offset = random.randint(0, 359)
         end_offset = random.randint(0, 359)
-        sector_first_half = [angle - start_offset for angle in angles[:50]]
-        sector_second_half = [angle - end_offset for angle in angles[50:]]
-        self.sector_angles = sector_first_half + sector_second_half
-        self.image_angles = angles
+        self.spinner_angles = [angle - start_offset for angle in ANGLES[:50]] + [angle - end_offset for angle in
+                                                                                 ANGLES[50:]]
+        self.image_angles = ANGLES
+        self.stop_spinner_img = None
+        self.stop_center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
+        self.stop_center_circle_img = self.center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
 
         bg_img, spinner_img = self.prepare()
+        self.stop_spinner_img = spinner_img.rotate(self.spinner_angles[-1], center=CENTER)
 
         frame_list = []
         for i in range(NUM_TOTAL_FRAMES):
@@ -146,15 +150,15 @@ class SpinnerGifMaker:
     def getSpinnerFrame(self, bg_img, spinner_img, frame_number):
         # Rotate
         if frame_number < NUM_SPIN_FRAMES:
-            spinner_img = spinner_img.rotate(self.sector_angles[frame_number], center=CENTER)
+            spinner_img = spinner_img.rotate(self.spinner_angles[frame_number], center=CENTER)
             center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[frame_number], center=(100,
                                                                                                                    100))
             center_circle_img = self.center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
         # Stop rotation
         else:
-            spinner_img = spinner_img.rotate(self.sector_angles[-1], center=CENTER)
-            center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
-            center_circle_img = self.center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
+            spinner_img = self.stop_spinner_img
+            center_circle_cover_img = self.stop_center_circle_cover_img
+            center_circle_img = self.stop_center_circle_img
 
         self.paste(bg_img, spinner_img, (0, 0), MASK_IMG)
 
