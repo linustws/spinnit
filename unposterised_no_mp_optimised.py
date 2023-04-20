@@ -36,6 +36,9 @@ except FileNotFoundError as e:
     CIRCLE_OUTLINE_IMG = Image.open('circle_outline.png')
     CENTER_CIRCLE_OUTLINE_IMG = Image.open('center_circle_outline.png')
     TRIANGLE_IMG = Image.open('triangle.png')
+CIRCLE_OUTLINE_IMG_QUANTIZED = CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2)
+CENTER_CIRCLE_OUTLINE_IMG_QUANTIZED = CENTER_CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2)
+TRIANGLE_IMG_QUANTIZED = TRIANGLE_IMG.convert("RGB").quantize(2)
 PASTEL_COLORS = [(220, 214, 255), (214, 240, 255), (222, 255, 239), (255, 250, 240), (255, 237, 237),
                  (255, 222, 222), (247, 246, 207), (182, 216, 242), (244, 207, 223), (87, 132, 186),
                  (154, 200, 235), (204, 212, 191), (231, 203, 169), (238, 186, 178), (245, 243, 231),
@@ -60,7 +63,7 @@ class SpinnerGifMaker:
         random_image = random.choice(image_list)
         image_path = os.path.join(folder_path, random_image)
         self.center_circle_img = Image.open(image_path).resize((200, 200))
-        self.center_circle_img = Image.open("images/joy/joy_jc.png")
+        # self.center_circle_img = Image.open("images/joy/joy_jc.png")
         self.colors = random.sample(PASTEL_COLORS, len(options))
         first_half = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + [i * -150 - 150 for i in
                                                                         range(int((NUM_SPIN_FRAMES - 20) / 2))]
@@ -75,10 +78,12 @@ class SpinnerGifMaker:
         self.sector_angles = sector_first_half + sector_second_half
         self.image_angles = angles
 
+        bg_img, spinner_img = self.prepare()
+
         frame_list = []
         for i in range(NUM_TOTAL_FRAMES):
             # print(f"frame {i}")
-            frame = self.getSpinnerFrame(i)
+            frame = self.getSpinnerFrame(bg_img.copy(), spinner_img, i)
             frame_list.append(frame)
         frame_list[0].save('spinner.gif', format='GIF', append_images=frame_list[1:], save_all=True,
                            duration=DURATIONS, disposal=2, loop=0)
@@ -99,10 +104,8 @@ class SpinnerGifMaker:
         # Return the number of free colors left
         return 256 - len(bg_img.palette.colors)
 
-    def getSpinnerFrame(self, frame_number):
-        start = time.time()
+    def prepare(self):
         # 16 colors
-        # print(len(Image.open("images/bg/strawberry.png").convert("P").getcolors()))
         bg_img = Image.open("images/bg/strawberry.png").convert("RGB").quantize(16)
         spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
         # Add color pie slices
@@ -136,25 +139,27 @@ class SpinnerGifMaker:
             text_center_x = sector_center_x - text_width / 2
             text_center_y = sector_center_y - text_height / 2
             spinner_img.paste(text_img, (int(text_center_x), int(text_center_y)), text_img)
+        # 10 colors
+        spinner_img = spinner_img.quantize(10)
+        return bg_img, spinner_img
 
-        center_circle_cover_img = self.center_circle_cover_img.copy()
-        center_circle_img = self.center_circle_img.copy()
+    def getSpinnerFrame(self, bg_img, spinner_img, frame_number):
         # Rotate
         if frame_number < NUM_SPIN_FRAMES:
             spinner_img = spinner_img.rotate(self.sector_angles[frame_number], center=CENTER)
-            center_circle_cover_img = center_circle_cover_img.rotate(self.image_angles[frame_number], center=(100, 100))
-            center_circle_img = center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
+            center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[frame_number], center=(100,
+                                                                                                                   100))
+            center_circle_img = self.center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
         # Stop rotation
         else:
             spinner_img = spinner_img.rotate(self.sector_angles[-1], center=CENTER)
-            center_circle_cover_img = center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
-            center_circle_img = center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
+            center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
+            center_circle_img = self.center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
 
-        # 10 colors
-        self.paste(bg_img, spinner_img.quantize(10), (0, 0), MASK_IMG)
+        self.paste(bg_img, spinner_img, (0, 0), MASK_IMG)
 
         # created outline image cos the spinner outline is quite wonky
-        colors_left = self.paste(bg_img, CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2),
+        colors_left = self.paste(bg_img, CIRCLE_OUTLINE_IMG_QUANTIZED,
                                  (int((DIMENSIONS[0] - RADIUS * 2) / 2),
                                   int((DIMENSIONS[1] - RADIUS * 2) /
                                       2)), CIRCLE_OUTLINE_IMG)
@@ -174,23 +179,23 @@ class SpinnerGifMaker:
         # comment out to see without the cover image
         center_circle_img.paste(center_circle_cover_img, mask=center_circle_cover_mask_img)
 
+        # reserve 1 color for triangle
         if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
             colors_left -= 1
+
         self.paste(bg_img, center_circle_img.convert("RGB").quantize(colors_left), (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), CENTER_CIRCLE_MASK_IMG)
 
         # created outline image cos no center circle outline
-        self.paste(bg_img, CENTER_CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2), (
+        self.paste(bg_img, CENTER_CIRCLE_OUTLINE_IMG_QUANTIZED, (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), CENTER_CIRCLE_OUTLINE_IMG)
 
         # Add blink effect to triangle image on last frame
         if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
-            self.paste(bg_img, TRIANGLE_IMG.convert("RGB").quantize(2), mask=TRIANGLE_IMG)
+            self.paste(bg_img, TRIANGLE_IMG_QUANTIZED, mask=TRIANGLE_IMG)
 
-        end = time.time()
-        # print(f"time taken to create frame: {end - start} seconds")
         return bg_img
 
 # for testing

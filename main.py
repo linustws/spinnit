@@ -14,7 +14,7 @@ from telegram.ext import MessageHandler
 from telegram.ext import filters
 
 from logger import Logger
-from noposturisednomp import SpinnerGifMaker
+from unposterised_no_mp_optimised import SpinnerGifMaker
 
 telegram_logger = Logger('telegram.ext._application', 'help_joy_decide.log')
 main_logger = Logger('main', 'help_joy_decide.log')
