@@ -82,7 +82,7 @@ class SpinnerGifMaker:
         frame_list[0].save('spinner.gif', format='GIF', append_images=frame_list[1:], save_all=True,
                            duration=DURATIONS, disposal=2, loop=0)
         end = time.time()
-        print(f"time taken normal: {end - start} seconds")
+        print(f"time taken no mp posterised: {end - start} seconds")
 
     def getSpinnerFrame(self, frame_number):
         bg_img = Image.open("images/bg/strawberry.png")
