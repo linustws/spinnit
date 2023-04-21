@@ -77,14 +77,10 @@ class SpinnerGifMaker:
         self.spinner_angles = [angle - start_offset for angle in ANGLES[:50]] + [angle - end_offset for angle in
                                                                                  ANGLES[50:]]
         self.image_angles = ANGLES
-        self.stop_spinner_img = None
-        self.stop_center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
-        self.stop_center_circle_img = self.center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
         self.stop_frame_no_triangle = None
         self.stop_frame_with_triangle = None
 
         bg_img, spinner_img = self.prepare()
-        self.stop_spinner_img = spinner_img.rotate(self.spinner_angles[-1], center=CENTER)
 
         frame_list = []
         for i in range(NUM_TOTAL_FRAMES):
@@ -163,9 +159,9 @@ class SpinnerGifMaker:
             center_circle_img = self.center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
         # Stop rotation
         else:
-            spinner_img = self.stop_spinner_img
-            center_circle_cover_img = self.stop_center_circle_cover_img
-            center_circle_img = self.stop_center_circle_img
+            spinner_img = spinner_img.rotate(self.spinner_angles[-1], center=CENTER)
+            center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
+            center_circle_img = self.center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
 
         self.paste(bg_img, spinner_img, (0, 0), MASK_IMG)
 
