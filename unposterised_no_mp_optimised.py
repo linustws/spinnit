@@ -26,8 +26,6 @@ ANGLES = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + \
          [i * -150 + 6000 for i in range(int((NUM_SPIN_FRAMES - 20) / 2))] + \
          [100, 70, 50, 30, 20, 15, 10, 5, 2, 0]
 
-CENTER_CIRCLE_COVER_IMG = Image.open("images/cover/cat.png")
-
 # import components
 try:
     MASK_IMG = Image.open('mask.png')
@@ -42,6 +40,15 @@ except FileNotFoundError as e:
     CIRCLE_OUTLINE_IMG = Image.open('circle_outline.png')
     CENTER_CIRCLE_OUTLINE_IMG = Image.open('center_circle_outline.png')
     TRIANGLE_IMG = Image.open('triangle.png')
+NUM_BG_IMG_COLORS = 16
+NUM_SPINNER_IMG_COLORS = 10
+BG_IMG_QUANTIZED = Image.open("images/bg/strawberry.png").convert("RGB").quantize(NUM_BG_IMG_COLORS)
+CENTER_CIRCLE_COVER_IMG = Image.open("images/cover/cat.png")
+# quantize colors minus 1 to reserve color for triangle
+CENTER_CIRCLE_COVER_IMG_QUANTIZED = Image.open("images/cover/cat.png").convert("RGB").quantize(256 -
+                                                                                               NUM_BG_IMG_COLORS -
+                                                                                               NUM_SPINNER_IMG_COLORS
+                                                                                               - 1)
 CIRCLE_OUTLINE_IMG_QUANTIZED = CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2)
 CENTER_CIRCLE_OUTLINE_IMG_QUANTIZED = CENTER_CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2)
 TRIANGLE_IMG_QUANTIZED = TRIANGLE_IMG.convert("RGB").quantize(2)
@@ -62,13 +69,17 @@ class SpinnerGifMaker:
         random.shuffle(options)
         self.options = options
         # 200 x 200 pic
-        self.center_circle_cover_img = CENTER_CIRCLE_COVER_IMG
         folder_path = "images/joy"
         file_list = os.listdir(folder_path)
         image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
         random_image = random.choice(image_list)
         image_path = os.path.join(folder_path, random_image)
         self.center_circle_img = Image.open(image_path).resize((200, 200))
+        # quantize colors minus 1 to reserve color for triangle
+        self.center_circle_img_with_triangle_quantized = self.center_circle_img.convert("RGB").quantize(
+            256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
+        self.center_circle_img_no_triangle_quantized = self.center_circle_img.convert("RGB").quantize(
+            256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS)
         # self.center_circle_img = Image.open("images/joy/joy_jc.png")
         self.colors = random.sample(PASTEL_COLORS, len(options))
         # start and end at unpredictable positions
@@ -103,12 +114,9 @@ class SpinnerGifMaker:
         # and paste
         bg_img.paste(im, box, mask)
 
-        # return the number of free colors left
-        return 256 - len(bg_img.palette.colors)
-
     def prepare(self):
         # 16 colors
-        bg_img = Image.open("images/bg/strawberry.png").convert("RGB").quantize(16)
+        bg_img = BG_IMG_QUANTIZED
         spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
         # add color pie slices
         spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')
@@ -142,7 +150,7 @@ class SpinnerGifMaker:
             text_center_y = sector_center_y - text_height / 2
             spinner_img.paste(text_img, (int(text_center_x), int(text_center_y)), text_img)
         # 10 colors
-        spinner_img = spinner_img.quantize(10)
+        spinner_img = spinner_img.quantize(NUM_SPINNER_IMG_COLORS)
         return bg_img, spinner_img
 
     def getSpinnerFrame(self, bg_img, spinner_img, frame_number):
@@ -155,15 +163,13 @@ class SpinnerGifMaker:
         elif frame_number < NUM_SPIN_FRAMES:
             spinner_img = spinner_img.rotate(self.spinner_angles[frame_number], center=CENTER)
             if frame_number < 40:
-                center_circle_img = self.center_circle_cover_img.rotate(self.image_angles[frame_number],
-                                                                        center=(100, 100))
+                center_circle_img = CENTER_CIRCLE_COVER_IMG_QUANTIZED.rotate(self.image_angles[frame_number],
+                                                                             center=(100, 100))
             elif frame_number >= 60:
-                center_circle_img = self.center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
+                # with triangle quantized with 1 less color
+                center_circle_img = self.center_circle_img_with_triangle_quantized.rotate(
+                    self.image_angles[frame_number], center=(100, 100))
             else:
-                center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[frame_number],
-                                                                              center=(100, 100))
-                center_circle_img = self.center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
-
                 # center circle cover mask that decreases in opacity
                 center_circle_cover_mask_size = (CENTER_CIRCLE_RADIUS * 2, CENTER_CIRCLE_RADIUS * 2)
                 center_circle_cover_mask_img = Image.new('L', center_circle_cover_mask_size, color=0)
@@ -172,27 +178,35 @@ class SpinnerGifMaker:
                 center_circle_cover_mask_draw.ellipse((0, 0) + center_circle_cover_mask_size, fill=fill)
 
                 # paste cover image
-                center_circle_img.paste(center_circle_cover_img, mask=center_circle_cover_mask_img)
+                center_circle_img = self.center_circle_img.copy()
+                center_circle_img.paste(CENTER_CIRCLE_COVER_IMG, mask=center_circle_cover_mask_img)
+                # quantize colors minus 1 to reserve color for triangle
+                center_circle_img = center_circle_img.convert("RGB").quantize(
+                    256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
+                center_circle_img = center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
+
         # stop rotation
         else:
             spinner_img = spinner_img.rotate(self.spinner_angles[-1], center=CENTER)
-            center_circle_img = self.center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
+            # with triangle quantized with 1 less color
+            if frame_number % 2 == 1:
+                center_circle_img = self.center_circle_img_with_triangle_quantized
+            else:
+                center_circle_img = self.center_circle_img_no_triangle_quantized
+            center_circle_img = center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
 
         self.paste(bg_img, spinner_img, (0, 0), MASK_IMG)
 
         # created outline image cos the spinner outline is quite wonky
-        colors_left = self.paste(bg_img, CIRCLE_OUTLINE_IMG_QUANTIZED,
-                                 (int((DIMENSIONS[0] - RADIUS * 2) / 2),
-                                  int((DIMENSIONS[1] - RADIUS * 2) /
-                                      2)), CIRCLE_OUTLINE_IMG)
+        self.paste(bg_img, CIRCLE_OUTLINE_IMG_QUANTIZED,
+                   (int((DIMENSIONS[0] - RADIUS * 2) / 2), int((DIMENSIONS[1] - RADIUS * 2) / 2)), CIRCLE_OUTLINE_IMG)
 
-        # reserve 1 color for triangle
-        if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
-            colors_left -= 1
-
-        self.paste(bg_img, center_circle_img.convert("RGB").quantize(colors_left), (
+        self.paste(bg_img, center_circle_img, (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), CENTER_CIRCLE_MASK_IMG)
+        # number of free colors left
+        colors_left = 256 - len(bg_img.palette.colors)
+        print(frame_number, colors_left)
 
         # created outline image cos no center circle outline
         self.paste(bg_img, CENTER_CIRCLE_OUTLINE_IMG_QUANTIZED, (
@@ -211,5 +225,6 @@ class SpinnerGifMaker:
 
         return bg_img
 
+
 # for testing
-# SpinnerGifMaker(["hi", "play"])
+SpinnerGifMaker(["hi", "play"])
