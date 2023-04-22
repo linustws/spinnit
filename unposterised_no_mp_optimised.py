@@ -20,7 +20,7 @@ NUM_TOTAL_FRAMES = NUM_SPIN_FRAMES + NUM_BLINK_FRAMES
 # frame durations
 DURATIONS = [1000, 300, 200, 130, 80, 60, 40, 30, 25, 20] \
             + [20 for _ in range(NUM_SPIN_FRAMES - 20)] + [20, 25, 30, 40, 60, 80, 130, 200, 300, 1000] \
-            + [100 for _ in range(NUM_BLINK_FRAMES)]  # Fastest 20
+            + [100 for _ in range(NUM_BLINK_FRAMES)]  # fastest 20
 ANGLES = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + \
          [i * -150 - 150 for i in range(int((NUM_SPIN_FRAMES - 20) / 2))] + \
          [i * -150 + 6000 for i in range(int((NUM_SPIN_FRAMES - 20) / 2))] + \
@@ -93,7 +93,7 @@ class SpinnerGifMaker:
         print(f"time taken no mp unposterised: {end - start} seconds")
 
     def paste(self, bg_img, im, box=None, mask=None):
-        # To combine one P image with another
+        # to combine one P image with another
         # add all of the new colors to the palette of the first image
         remap = [0] * 256
         for color, i in im.palette.colors.items():
@@ -103,14 +103,14 @@ class SpinnerGifMaker:
         # and paste
         bg_img.paste(im, box, mask)
 
-        # Return the number of free colors left
+        # return the number of free colors left
         return 256 - len(bg_img.palette.colors)
 
     def prepare(self):
         # 16 colors
         bg_img = Image.open("images/bg/strawberry.png").convert("RGB").quantize(16)
         spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
-        # Add color pie slices
+        # add color pie slices
         spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')
         num_sectors = len(self.options)
         for i, option in enumerate(self.options):
@@ -124,7 +124,7 @@ class SpinnerGifMaker:
                                   start=start_angle,
                                   end=end_angle, fill=color + fill, outline='black')
 
-            # Add text options
+            # add text options
             font = ImageFont.truetype("arial.ttf", 30)
             _, _, text_width, text_height = spinner_draw.textbbox((0, 0), option, font=font, anchor="lt")
             sector_center_angle = (start_angle + end_angle) / 2
@@ -146,21 +146,36 @@ class SpinnerGifMaker:
         return bg_img, spinner_img
 
     def getSpinnerFrame(self, bg_img, spinner_img, frame_number):
-        # Return stored stop frames
+        # return stored stop frames
         if self.stop_frame_no_triangle is not None and frame_number % 2 == 0:
             return self.stop_frame_no_triangle
-        if self.stop_frame_with_triangle is not None and frame_number % 2 == 1:
+        elif self.stop_frame_with_triangle is not None and frame_number % 2 == 1:
             return self.stop_frame_with_triangle
-        # Rotate
-        if frame_number < NUM_SPIN_FRAMES:
+        # rotate
+        elif frame_number < NUM_SPIN_FRAMES:
             spinner_img = spinner_img.rotate(self.spinner_angles[frame_number], center=CENTER)
-            center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[frame_number], center=(100,
-                                                                                                                   100))
-            center_circle_img = self.center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
-        # Stop rotation
+            if frame_number < 40:
+                center_circle_img = self.center_circle_cover_img.rotate(self.image_angles[frame_number],
+                                                                        center=(100, 100))
+            elif frame_number >= 60:
+                center_circle_img = self.center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
+            else:
+                center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[frame_number],
+                                                                              center=(100, 100))
+                center_circle_img = self.center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
+
+                # center circle cover mask that decreases in opacity
+                center_circle_cover_mask_size = (CENTER_CIRCLE_RADIUS * 2, CENTER_CIRCLE_RADIUS * 2)
+                center_circle_cover_mask_img = Image.new('L', center_circle_cover_mask_size, color=0)
+                center_circle_cover_mask_draw = ImageDraw.Draw(center_circle_cover_mask_img)
+                fill = int((NUM_TOTAL_FRAMES - frame_number) / NUM_TOTAL_FRAMES * 255)
+                center_circle_cover_mask_draw.ellipse((0, 0) + center_circle_cover_mask_size, fill=fill)
+
+                # paste cover image
+                center_circle_img.paste(center_circle_cover_img, mask=center_circle_cover_mask_img)
+        # stop rotation
         else:
             spinner_img = spinner_img.rotate(self.spinner_angles[-1], center=CENTER)
-            center_circle_cover_img = self.center_circle_cover_img.rotate(self.image_angles[-1], center=(100, 100))
             center_circle_img = self.center_circle_img.rotate(self.image_angles[-1], center=(100, 100))
 
         self.paste(bg_img, spinner_img, (0, 0), MASK_IMG)
@@ -170,21 +185,6 @@ class SpinnerGifMaker:
                                  (int((DIMENSIONS[0] - RADIUS * 2) / 2),
                                   int((DIMENSIONS[1] - RADIUS * 2) /
                                       2)), CIRCLE_OUTLINE_IMG)
-
-        # center circle cover mask that decreases in opacity
-        center_circle_cover_mask_size = (CENTER_CIRCLE_RADIUS * 2, CENTER_CIRCLE_RADIUS * 2)
-        center_circle_cover_mask_img = Image.new('L', center_circle_cover_mask_size, color=0)
-        center_circle_cover_mask_draw = ImageDraw.Draw(center_circle_cover_mask_img)
-        if frame_number < 40:
-            fill = 255
-        elif frame_number >= 60:
-            fill = 0
-        else:
-            fill = int((NUM_TOTAL_FRAMES - frame_number) / NUM_TOTAL_FRAMES * 255)
-        center_circle_cover_mask_draw.ellipse((0, 0) + center_circle_cover_mask_size, fill=fill)
-
-        # comment out to see without the cover image
-        center_circle_img.paste(center_circle_cover_img, mask=center_circle_cover_mask_img)
 
         # reserve 1 color for triangle
         if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
@@ -199,11 +199,11 @@ class SpinnerGifMaker:
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), CENTER_CIRCLE_OUTLINE_IMG)
 
-        # Add blink effect to triangle image on last frame
+        # add blink effect to triangle image on last frame
         if frame_number < NUM_SPIN_FRAMES or frame_number % 2 == 1:
             self.paste(bg_img, TRIANGLE_IMG_QUANTIZED, mask=TRIANGLE_IMG)
 
-        # Store stop frames to avoid recomputation
+        # store stop frames to avoid recomputation
         if frame_number == NUM_SPIN_FRAMES:
             self.stop_frame_no_triangle = bg_img
         if frame_number == NUM_SPIN_FRAMES + 1:
