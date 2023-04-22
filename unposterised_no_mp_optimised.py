@@ -75,12 +75,12 @@ class SpinnerGifMaker:
         random_image = random.choice(image_list)
         image_path = os.path.join(folder_path, random_image)
         self.center_circle_img = Image.open(image_path).resize((200, 200))
+        # self.center_circle_img = Image.open("images/joy/joy_jc.png")
         # quantize colors minus 1 to reserve color for triangle
         self.center_circle_img_with_triangle_quantized = self.center_circle_img.convert("RGB").quantize(
             256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
         self.center_circle_img_no_triangle_quantized = self.center_circle_img.convert("RGB").quantize(
             256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS)
-        # self.center_circle_img = Image.open("images/joy/joy_jc.png")
         self.colors = random.sample(PASTEL_COLORS, len(options))
         # start and end at unpredictable positions
         start_offset = random.randint(0, 359)
@@ -174,7 +174,8 @@ class SpinnerGifMaker:
                 center_circle_cover_mask_size = (CENTER_CIRCLE_RADIUS * 2, CENTER_CIRCLE_RADIUS * 2)
                 center_circle_cover_mask_img = Image.new('L', center_circle_cover_mask_size, color=0)
                 center_circle_cover_mask_draw = ImageDraw.Draw(center_circle_cover_mask_img)
-                fill = int((NUM_TOTAL_FRAMES - frame_number) / NUM_TOTAL_FRAMES * 255)
+                fill = int((20 - (frame_number - 40)) / 21 * 255)
+                # print(frame_number, fill)
                 center_circle_cover_mask_draw.ellipse((0, 0) + center_circle_cover_mask_size, fill=fill)
 
                 # paste cover image
@@ -205,8 +206,8 @@ class SpinnerGifMaker:
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), CENTER_CIRCLE_MASK_IMG)
         # number of free colors left
-        colors_left = 256 - len(bg_img.palette.colors)
-        print(frame_number, colors_left)
+        # colors_left = 256 - len(bg_img.palette.colors)
+        # print(frame_number, colors_left)
 
         # created outline image cos no center circle outline
         self.paste(bg_img, CENTER_CIRCLE_OUTLINE_IMG_QUANTIZED, (
@@ -227,4 +228,4 @@ class SpinnerGifMaker:
 
 
 # for testing
-SpinnerGifMaker(["hi", "play"])
+# SpinnerGifMaker(["hi", "play"])
