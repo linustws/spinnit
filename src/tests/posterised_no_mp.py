@@ -7,7 +7,7 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
-from components_creator import create_images
+from src.main.components_creator import create_images
 
 DIMENSIONS = (500, 500)
 CENTER = (250, 250)
@@ -24,18 +24,18 @@ DURATIONS = [1000, 300, 200, 130, 80, 60, 40, 30, 25, 20] \
 
 # import components
 try:
-    MASK_IMG = Image.open('mask.png')
-    CENTER_CIRCLE_MASK_IMG = Image.open('center_circle_mask.png')
-    CIRCLE_OUTLINE_IMG = Image.open('circle_outline.png')
-    CENTER_CIRCLE_OUTLINE_IMG = Image.open('center_circle_outline.png')
-    TRIANGLE_IMG = Image.open('triangle.png')
+    MASK_IMG = Image.open('../../assets/components/mask.png')
+    CENTER_CIRCLE_MASK_IMG = Image.open('../../assets/components/center_circle_mask.png')
+    CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/circle_outline.png')
+    CENTER_CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/center_circle_outline.png')
+    TRIANGLE_IMG = Image.open('../../assets/components/triangle.png')
 except FileNotFoundError as e:
     create_images(DIMENSIONS, CENTER, RADIUS, CENTER_CIRCLE_RADIUS)
-    MASK_IMG = Image.open('mask.png')
-    CENTER_CIRCLE_MASK_IMG = Image.open('center_circle_mask.png')
-    CIRCLE_OUTLINE_IMG = Image.open('circle_outline.png')
-    CENTER_CIRCLE_OUTLINE_IMG = Image.open('center_circle_outline.png')
-    TRIANGLE_IMG = Image.open('triangle.png')
+    MASK_IMG = Image.open('../../assets/components/mask.png')
+    CENTER_CIRCLE_MASK_IMG = Image.open('../../assets/components/center_circle_mask.png')
+    CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/circle_outline.png')
+    CENTER_CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/center_circle_outline.png')
+    TRIANGLE_IMG = Image.open('../../assets/components/triangle.png')
 PASTEL_COLORS = [(220, 214, 255), (214, 240, 255), (222, 255, 239), (255, 250, 240), (255, 237, 237),
                  (255, 222, 222), (247, 246, 207), (182, 216, 242), (244, 207, 223), (87, 132, 186),
                  (154, 200, 235), (204, 212, 191), (231, 203, 169), (238, 186, 178), (245, 243, 231),
@@ -53,14 +53,14 @@ class SpinnerGifMaker:
         random.shuffle(options)
         self.options = options
         # 200 x 200 pic
-        self.center_circle_cover_img = Image.open("images/cover/cat.png")
-        folder_path = "images/joy"
+        self.center_circle_cover_img = Image.open("../../assets/images/cover/cat.png")
+        folder_path = "../../assets/images/joy"
         file_list = os.listdir(folder_path)
         image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
         random_image = random.choice(image_list)
         image_path = os.path.join(folder_path, random_image)
         self.center_circle_img = Image.open(image_path).resize((200, 200))
-        self.center_circle_img = Image.open("images/joy/joy_jc.png")
+        self.center_circle_img = Image.open("../../assets/images/joy/joy_jc.png")
         self.colors = random.sample(PASTEL_COLORS, len(options))
         first_half = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + [i * -150 - 150 for i in
                                                                         range(int((NUM_SPIN_FRAMES - 20) / 2))]
@@ -85,7 +85,7 @@ class SpinnerGifMaker:
         print(f"time taken no mp posterised: {end - start} seconds")
 
     def getSpinnerFrame(self, frame_number):
-        bg_img = Image.open("images/bg/strawberry.png")
+        bg_img = Image.open("../../assets/images/bg/strawberry.png")
         spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
         # Add color pie slices
         spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')

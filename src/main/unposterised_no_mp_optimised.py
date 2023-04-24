@@ -28,27 +28,27 @@ ANGLES = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + \
 
 # import components
 try:
-    MASK_IMG = Image.open('mask.png')
-    CENTER_CIRCLE_MASK_IMG = Image.open('center_circle_mask.png')
-    CIRCLE_OUTLINE_IMG = Image.open('circle_outline.png')
-    CENTER_CIRCLE_OUTLINE_IMG = Image.open('center_circle_outline.png')
-    TRIANGLE_IMG = Image.open('triangle.png')
+    MASK_IMG = Image.open('../../assets/components/mask.png')
+    CENTER_CIRCLE_MASK_IMG = Image.open('../../assets/components/center_circle_mask.png')
+    CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/circle_outline.png')
+    CENTER_CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/center_circle_outline.png')
+    TRIANGLE_IMG = Image.open('../../assets/components/triangle.png')
 except FileNotFoundError as e:
     create_images(DIMENSIONS, CENTER, RADIUS, CENTER_CIRCLE_RADIUS)
-    MASK_IMG = Image.open('mask.png')
-    CENTER_CIRCLE_MASK_IMG = Image.open('center_circle_mask.png')
-    CIRCLE_OUTLINE_IMG = Image.open('circle_outline.png')
-    CENTER_CIRCLE_OUTLINE_IMG = Image.open('center_circle_outline.png')
-    TRIANGLE_IMG = Image.open('triangle.png')
+    MASK_IMG = Image.open('../../assets/components/mask.png')
+    CENTER_CIRCLE_MASK_IMG = Image.open('../../assets/components/center_circle_mask.png')
+    CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/circle_outline.png')
+    CENTER_CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/center_circle_outline.png')
+    TRIANGLE_IMG = Image.open('../../assets/components/triangle.png')
 NUM_BG_IMG_COLORS = 16
 NUM_SPINNER_IMG_COLORS = 10
-BG_IMG_QUANTIZED = Image.open("images/bg/strawberry.png").convert("RGB").quantize(NUM_BG_IMG_COLORS)
-CENTER_CIRCLE_COVER_IMG = Image.open("images/cover/cat.png")
+BG_IMG_QUANTIZED = Image.open("../../assets/images/bg/strawberry.png").convert("RGB").quantize(NUM_BG_IMG_COLORS)
+CENTER_CIRCLE_COVER_IMG = Image.open("../../assets/images/cover/cat.png")
 # quantize colors minus 1 to reserve color for triangle
-CENTER_CIRCLE_COVER_IMG_QUANTIZED = Image.open("images/cover/cat.png").convert("RGB").quantize(256 -
-                                                                                               NUM_BG_IMG_COLORS -
-                                                                                               NUM_SPINNER_IMG_COLORS
-                                                                                               - 1)
+CENTER_CIRCLE_COVER_IMG_QUANTIZED = Image.open("../../assets/images/cover/cat.png").convert("RGB").quantize(256 -
+                                                                                                            NUM_BG_IMG_COLORS -
+                                                                                                            NUM_SPINNER_IMG_COLORS
+                                                                                                            - 1)
 CIRCLE_OUTLINE_IMG_QUANTIZED = CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2)
 CENTER_CIRCLE_OUTLINE_IMG_QUANTIZED = CENTER_CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2)
 TRIANGLE_IMG_QUANTIZED = TRIANGLE_IMG.convert("RGB").quantize(2)
@@ -69,7 +69,7 @@ class SpinnerGifMaker:
         random.shuffle(options)
         self.options = options
         # 200 x 200 pic
-        folder_path = "images/joy"
+        folder_path = "../../assets/images/joy"
         file_list = os.listdir(folder_path)
         image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
         random_image = random.choice(image_list)
