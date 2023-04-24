@@ -9,6 +9,11 @@ from PIL import ImageFont
 
 from components_creator import create_images
 
+this_dir = os.path.dirname(__file__)
+assets_rel_path = '../../assets/'
+assets_abs_path = os.path.join(this_dir, assets_rel_path)
+gif_save_path = os.path.join(this_dir, 'spinner.gif')
+
 DIMENSIONS = (500, 500)
 CENTER = (250, 250)
 RADIUS = 225
@@ -28,30 +33,30 @@ ANGLES = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + \
 
 # import components
 try:
-    MASK_IMG = Image.open('../../assets/components/mask.png')
-    CENTER_CIRCLE_MASK_IMG = Image.open('../../assets/components/center_circle_mask.png')
-    CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/circle_outline.png')
-    CENTER_CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/center_circle_outline.png')
-    TRIANGLE_IMG = Image.open('../../assets/components/triangle.png')
+    MASK_IMG = Image.open(assets_abs_path + 'components/mask.png')
+    CENTER_CIRCLE_MASK_IMG = Image.open(assets_abs_path + 'components/center_circle_mask.png')
+    CIRCLE_OUTLINE_IMG = Image.open(assets_abs_path + 'components/circle_outline.png')
+    CENTER_CIRCLE_OUTLINE_IMG = Image.open(assets_abs_path + 'components/center_circle_outline.png')
+    TRIANGLE_IMG = Image.open(assets_abs_path + 'components/triangle.png')
 except FileNotFoundError as e:
     create_images(DIMENSIONS, CENTER, RADIUS, CENTER_CIRCLE_RADIUS)
-    MASK_IMG = Image.open('../../assets/components/mask.png')
-    CENTER_CIRCLE_MASK_IMG = Image.open('../../assets/components/center_circle_mask.png')
-    CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/circle_outline.png')
-    CENTER_CIRCLE_OUTLINE_IMG = Image.open('../../assets/components/center_circle_outline.png')
-    TRIANGLE_IMG = Image.open('../../assets/components/triangle.png')
+    MASK_IMG = Image.open(assets_abs_path + 'components/mask.png')
+    CENTER_CIRCLE_MASK_IMG = Image.open(assets_abs_path + 'components/center_circle_mask.png')
+    CIRCLE_OUTLINE_IMG = Image.open(assets_abs_path + 'components/circle_outline.png')
+    CENTER_CIRCLE_OUTLINE_IMG = Image.open(assets_abs_path + 'components/center_circle_outline.png')
+    TRIANGLE_IMG = Image.open(assets_abs_path + 'components/triangle.png')
 NUM_BG_IMG_COLORS = 16
 NUM_SPINNER_IMG_COLORS = 10
-BG_IMG_QUANTIZED = Image.open("../../assets/images/bg/strawberry.png").convert("RGB").quantize(NUM_BG_IMG_COLORS)
-CENTER_CIRCLE_COVER_IMG = Image.open("../../assets/images/cover/cat.png")
+BG_IMG_QUANTIZED = Image.open(assets_abs_path + 'images/bg/strawberry.png').convert('RGB').quantize(NUM_BG_IMG_COLORS)
+CENTER_CIRCLE_COVER_IMG = Image.open(assets_abs_path + 'images/cover/cat.png')
 # quantize colors minus 1 to reserve color for triangle
-CENTER_CIRCLE_COVER_IMG_QUANTIZED = Image.open("../../assets/images/cover/cat.png").convert("RGB").quantize(256 -
-                                                                                                            NUM_BG_IMG_COLORS -
-                                                                                                            NUM_SPINNER_IMG_COLORS
-                                                                                                            - 1)
-CIRCLE_OUTLINE_IMG_QUANTIZED = CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2)
-CENTER_CIRCLE_OUTLINE_IMG_QUANTIZED = CENTER_CIRCLE_OUTLINE_IMG.convert("RGB").quantize(2)
-TRIANGLE_IMG_QUANTIZED = TRIANGLE_IMG.convert("RGB").quantize(2)
+CENTER_CIRCLE_COVER_IMG_QUANTIZED = Image.open(assets_abs_path + 'images/cover/cat.png').convert('RGB').quantize(256 -
+                                                                                                                 NUM_BG_IMG_COLORS -
+                                                                                                                 NUM_SPINNER_IMG_COLORS
+                                                                                                                 - 1)
+CIRCLE_OUTLINE_IMG_QUANTIZED = CIRCLE_OUTLINE_IMG.convert('RGB').quantize(2)
+CENTER_CIRCLE_OUTLINE_IMG_QUANTIZED = CENTER_CIRCLE_OUTLINE_IMG.convert('RGB').quantize(2)
+TRIANGLE_IMG_QUANTIZED = TRIANGLE_IMG.convert('RGB').quantize(2)
 PASTEL_COLORS = [(220, 214, 255), (214, 240, 255), (222, 255, 239), (255, 250, 240), (255, 237, 237),
                  (255, 222, 222), (247, 246, 207), (182, 216, 242), (244, 207, 223), (87, 132, 186),
                  (154, 200, 235), (204, 212, 191), (231, 203, 169), (238, 186, 178), (245, 243, 231),
@@ -69,17 +74,17 @@ class SpinnerGifMaker:
         random.shuffle(options)
         self.options = options
         # 200 x 200 pic
-        folder_path = "../../assets/images/joy"
+        folder_path = assets_abs_path + 'images/joy'
         file_list = os.listdir(folder_path)
         image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
         random_image = random.choice(image_list)
         image_path = os.path.join(folder_path, random_image)
         self.center_circle_img = Image.open(image_path).resize((200, 200))
-        # self.center_circle_img = Image.open("images/joy/joy_jc.png")
+        # self.center_circle_img = Image.open('images/joy/joy_jc.png')
         # quantize colors minus 1 to reserve color for triangle
-        self.center_circle_img_with_triangle_quantized = self.center_circle_img.convert("RGB").quantize(
+        self.center_circle_img_with_triangle_quantized = self.center_circle_img.convert('RGB').quantize(
             256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
-        self.center_circle_img_no_triangle_quantized = self.center_circle_img.convert("RGB").quantize(
+        self.center_circle_img_no_triangle_quantized = self.center_circle_img.convert('RGB').quantize(
             256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS)
         self.colors = random.sample(PASTEL_COLORS, len(options))
         # start and end at unpredictable positions
@@ -95,13 +100,13 @@ class SpinnerGifMaker:
 
         frame_list = []
         for i in range(NUM_TOTAL_FRAMES):
-            # print(f"frame {i}")
+            # print(f'frame {i}')
             frame = self.getSpinnerFrame(bg_img.copy(), spinner_img, i)
             frame_list.append(frame)
-        frame_list[0].save('spinner.gif', format='GIF', append_images=frame_list[1:], save_all=True,
+        frame_list[0].save(gif_save_path, format='GIF', append_images=frame_list[1:], save_all=True,
                            duration=DURATIONS, disposal=2, loop=0)
         end = time.time()
-        # print(f"time taken no mp unposterised: {end - start} seconds")
+        # print(f'time taken no mp unposterised: {end - start} seconds')
 
     def paste(self, bg_img, im, box=None, mask=None):
         # to combine one P image with another
@@ -133,8 +138,8 @@ class SpinnerGifMaker:
                                   end=end_angle, fill=color + fill, outline='black')
 
             # add text options
-            font = ImageFont.truetype("arial.ttf", 30)
-            _, _, text_width, text_height = spinner_draw.textbbox((0, 0), option, font=font, anchor="lt")
+            font = ImageFont.truetype(assets_abs_path + 'fonts/arial.ttf', 30)
+            _, _, text_width, text_height = spinner_draw.textbbox((0, 0), option, font=font, anchor='lt')
             sector_center_angle = (start_angle + end_angle) / 2
             sector_center_x = CENTER[0] + (RADIUS + CENTER_CIRCLE_RADIUS) * 0.5 * math.cos(sector_center_angle *
                                                                                            math.pi / 180)
@@ -143,7 +148,7 @@ class SpinnerGifMaker:
             text_angle = 180 - sector_center_angle
             text_img = Image.new('RGBA', (text_width, text_height), color=(0, 0, 0, 0))
             text_draw = ImageDraw.Draw(text_img)
-            text_draw.text((0, 0), option, fill=(0, 0, 0), font=font, anchor="lt")
+            text_draw.text((0, 0), option, fill=(0, 0, 0), font=font, anchor='lt')
             text_img = text_img.rotate(text_angle, expand=True)
             text_width, text_height = text_img.size
             text_center_x = sector_center_x - text_width / 2
@@ -182,7 +187,7 @@ class SpinnerGifMaker:
                 center_circle_img = self.center_circle_img.copy()
                 center_circle_img.paste(CENTER_CIRCLE_COVER_IMG, mask=center_circle_cover_mask_img)
                 # quantize colors minus 1 to reserve color for triangle
-                center_circle_img = center_circle_img.convert("RGB").quantize(
+                center_circle_img = center_circle_img.convert('RGB').quantize(
                     256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
                 center_circle_img = center_circle_img.rotate(self.image_angles[frame_number], center=(100, 100))
 
@@ -228,4 +233,4 @@ class SpinnerGifMaker:
 
 
 # for testing
-# SpinnerGifMaker(["ff", "flavours"])
+# SpinnerGifMaker(['ff', 'flavours'])

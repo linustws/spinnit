@@ -16,8 +16,8 @@ from telegram.ext import filters
 from logger import Logger
 from unposterised_no_mp_optimised import SpinnerGifMaker
 
-telegram_logger = Logger('telegram.ext._application', '../../help_joy_decide.log')
-main_logger = Logger('main', '../../help_joy_decide.log')
+telegram_logger = Logger('telegram.ext._application', 'help_joy_decide.log')
+main_logger = Logger('main', 'help_joy_decide.log')
 
 DEVELOPER_CHAT_ID = ***REMOVED***
 
@@ -97,7 +97,7 @@ async def generate_animation(options, chat_id, context):
     start = time.time()
     try:
         SpinnerGifMaker(options)
-        await context.bot.send_animation(chat_id=chat_id, animation='spinner.gif')
+        await context.bot.send_animation(chat_id=chat_id, animation='src/main/spinner.gif')
         end = time.time()
         # await context.bot.send_message(chat_id=chat_id, text=f"Time taken: {end - start} seconds")
     except telegram.error.RetryAfter as e:
