@@ -1,6 +1,7 @@
 import asyncio
 import html
 import json
+import os
 import time
 import traceback
 
@@ -98,6 +99,7 @@ async def generate_animation(options, chat_id, context):
     try:
         SpinnerGifMaker(options)
         await context.bot.send_animation(chat_id=chat_id, animation='src/main/spinner.gif')
+        os.remove('src/main/spinner.gif')  # delete the file after sending it
         end = time.time()
         # await context.bot.send_message(chat_id=chat_id, text=f"Time taken: {end - start} seconds")
     except telegram.error.RetryAfter as e:
