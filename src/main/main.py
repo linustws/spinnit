@@ -22,6 +22,9 @@ main_logger = Logger('main', 'help_joy_decide.log')
 
 DEVELOPER_CHAT_ID = ***REMOVED***
 
+this_dir = os.path.dirname(__file__)
+gif_path = os.path.join(this_dir, 'spinner.gif')
+
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Log the error and send a telegram message to notify the developer."""
@@ -98,8 +101,8 @@ async def generate_animation(options, chat_id, context):
     start = time.time()
     try:
         SpinnerGifMaker(options)
-        await context.bot.send_animation(chat_id=chat_id, animation='src/main/spinner.gif')
-        os.remove('src/main/spinner.gif')  # delete the file after sending it
+        await context.bot.send_animation(chat_id=chat_id, animation=gif_path)
+        os.remove(gif_path)  # delete the file after sending it
         end = time.time()
         # await context.bot.send_message(chat_id=chat_id, text=f"Time taken: {end - start} seconds")
     except telegram.error.RetryAfter as e:

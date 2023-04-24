@@ -12,7 +12,7 @@ from components_creator import create_images
 this_dir = os.path.dirname(__file__)
 assets_rel_path = '../../assets/'
 assets_abs_path = os.path.join(this_dir, assets_rel_path)
-gif_save_path = os.path.join(this_dir, 'spinner.gif')
+gif_path = os.path.join(this_dir, 'spinner.gif')
 
 DIMENSIONS = (500, 500)
 CENTER = (250, 250)
@@ -103,7 +103,7 @@ class SpinnerGifMaker:
             # print(f'frame {i}')
             frame = self.getSpinnerFrame(bg_img.copy(), spinner_img, i)
             frame_list.append(frame)
-        frame_list[0].save(gif_save_path, format='GIF', append_images=frame_list[1:], save_all=True,
+        frame_list[0].save(gif_path, format='GIF', append_images=frame_list[1:], save_all=True,
                            duration=DURATIONS, disposal=2, loop=0)
         end = time.time()
         # print(f'time taken no mp unposterised: {end - start} seconds')
