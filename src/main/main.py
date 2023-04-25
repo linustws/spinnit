@@ -20,7 +20,9 @@ from unposterised_no_mp_optimised import SpinnerGifMaker
 telegram_logger = Logger('telegram.ext._application', 'help_joy_decide.log')
 main_logger = Logger('main', 'help_joy_decide.log')
 
-DEVELOPER_CHAT_ID = ***REMOVED***
+TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
+DEVELOPER_CHAT_ID = int(os.environ['DEVELOPER_CHAT_ID'])
+SPINNER_IDS = [int(i) for i in os.environ['SPINNER_IDS'].split()]
 
 this_dir = os.path.dirname(__file__)
 gif_path = os.path.join(this_dir, 'spinner.gif')
@@ -83,8 +85,7 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /decide command")
     options = context.args
-    allowed_ids = [***REMOVED***, ***REMOVED***]
-    if update.effective_user.id not in allowed_ids:
+    if update.effective_user.id not in SPINNER_IDS:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="ps this bot is made only for joy "
                                                                               "rn 🙃 i'll release one that can be "
                                                                               "customised soon~")
