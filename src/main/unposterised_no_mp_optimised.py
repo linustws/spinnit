@@ -8,11 +8,15 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 from components_creator import create_images
+from logger import Logger
 
 this_dir = os.path.dirname(__file__)
 assets_rel_path = '../../assets/'
 assets_abs_path = os.path.join(this_dir, assets_rel_path)
 gif_path = os.path.join(this_dir, 'spinner.gif')
+logger_rel_path = '../../help_joy_decide.log'
+logger_abs_path = os.path.join(this_dir, logger_rel_path)
+spinner_logger = Logger('spinner', logger_abs_path)
 
 DIMENSIONS = (500, 500)
 CENTER = (250, 250)
@@ -47,18 +51,34 @@ except FileNotFoundError as e:
     TRIANGLE_IMG = Image.open(assets_abs_path + 'components/triangle.png')
 NUM_BG_IMG_COLORS = 16
 NUM_SPINNER_IMG_COLORS = 10
-BG_IMG_SPECIAL_QUANTIZED = Image.open(assets_abs_path + 'images/bg_special/strawberry.png').resize((500, 500)).convert(
-    'RGB').quantize(NUM_BG_IMG_COLORS)
+
+# 500 x 500 pic
 BG_IMG_GENERAL_QUANTIZED = Image.open(assets_abs_path + 'images/bg_general/starry_night.png').resize(
     (500, 500)).convert('RGB').quantize(NUM_BG_IMG_COLORS)
-REVEAL_SPECIAL_PATH = assets_abs_path + 'images/reveal_special'
-REVEAL_GENERAL_PATH = assets_abs_path + 'images/reveal_general'
-CENTER_CIRCLE_COVER_IMG = Image.open(assets_abs_path + 'images/cover/cat.png')
+# 200 x 200 pic
+CENTER_CIRCLE_COVER_IMG_GENERAL = Image.open(assets_abs_path + 'images/cover_general/cat.png').resize((200, 200))
 # quantize colors minus 1 to reserve color for triangle
-CENTER_CIRCLE_COVER_IMG_QUANTIZED = Image.open(assets_abs_path + 'images/cover/cat.png').convert('RGB').quantize(256 -
-                                                                                                                 NUM_BG_IMG_COLORS -
-                                                                                                                 NUM_SPINNER_IMG_COLORS
-                                                                                                                 - 1)
+CENTER_CIRCLE_COVER_IMG_GENERAL_QUANTIZED = Image.open(assets_abs_path + 'images/cover_general/cat.png').resize(
+    (200, 200)).convert('RGB').quantize(256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
+REVEAL_GENERAL_FILE_PATH = assets_abs_path + 'images/reveal_general'
+REVEAL_GENERAL_FILE_LIST = os.listdir(REVEAL_GENERAL_FILE_PATH)
+
+try:
+    BG_IMG_SPECIAL_QUANTIZED = Image.open(assets_abs_path + 'images/bg_special/strawberry.png').resize(
+        (500, 500)).convert('RGB').quantize(NUM_BG_IMG_COLORS)
+    CENTER_CIRCLE_COVER_IMG_SPECIAL = Image.open(assets_abs_path + 'images/cover_special/kuromi.png').resize((200, 200))
+    CENTER_CIRCLE_COVER_IMG_SPECIAL_QUANTIZED = Image.open(assets_abs_path + 'images/cover_special/kuromi.png').resize(
+        (200, 200)).convert('RGB').quantize(256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
+    REVEAL_SPECIAL_FILE_PATH = assets_abs_path + 'images/reveal_special'
+    REVEAL_SPECIAL_FILE_LIST = os.listdir(REVEAL_SPECIAL_FILE_PATH)
+except FileNotFoundError as e:
+    spinner_logger.log('warning', "Special images not found! Will respond to all using general images.")
+    BG_IMG_SPECIAL_QUANTIZED = BG_IMG_GENERAL_QUANTIZED
+    REVEAL_SPECIAL_FILE_PATH = REVEAL_GENERAL_FILE_PATH
+    REVEAL_SPECIAL_FILE_LIST = REVEAL_GENERAL_FILE_LIST
+    CENTER_CIRCLE_COVER_IMG_SPECIAL = CENTER_CIRCLE_COVER_IMG_GENERAL
+    CENTER_CIRCLE_COVER_IMG_SPECIAL_QUANTIZED = CENTER_CIRCLE_COVER_IMG_GENERAL_QUANTIZED
+
 CIRCLE_OUTLINE_IMG_QUANTIZED = CIRCLE_OUTLINE_IMG.convert('RGB').quantize(2)
 CENTER_CIRCLE_OUTLINE_IMG_QUANTIZED = CENTER_CIRCLE_OUTLINE_IMG.convert('RGB').quantize(2)
 TRIANGLE_IMG_QUANTIZED = TRIANGLE_IMG.convert('RGB').quantize(2)
@@ -78,17 +98,22 @@ class SpinnerGifMaker:
         start = time.time()
         random.shuffle(options)
         self.options = options
-        # 200 x 200 pic
         if is_special:
             self.bg_img = BG_IMG_SPECIAL_QUANTIZED
-            folder_path = REVEAL_SPECIAL_PATH
+            self.center_circle_cover_img = CENTER_CIRCLE_COVER_IMG_SPECIAL
+            self.center_circle_cover_img_quantized = CENTER_CIRCLE_COVER_IMG_SPECIAL_QUANTIZED
+            folder_path = REVEAL_SPECIAL_FILE_PATH
+            file_list = REVEAL_SPECIAL_FILE_LIST
         else:
             self.bg_img = BG_IMG_GENERAL_QUANTIZED
-            folder_path = REVEAL_GENERAL_PATH
-        file_list = os.listdir(folder_path)
+            self.center_circle_cover_img = CENTER_CIRCLE_COVER_IMG_GENERAL
+            self.center_circle_cover_img_quantized = CENTER_CIRCLE_COVER_IMG_GENERAL_QUANTIZED
+            folder_path = REVEAL_GENERAL_FILE_PATH
+            file_list = REVEAL_GENERAL_FILE_LIST
         image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
         random_image = random.choice(image_list)
         image_path = os.path.join(folder_path, random_image)
+        # 200 x 200 pic
         self.center_circle_img = Image.open(image_path).resize((200, 200))
         # self.center_circle_img = Image.open('images/reveal_special/joy_jc.png')
         # quantize colors minus 1 to reserve color for triangle
@@ -178,8 +203,8 @@ class SpinnerGifMaker:
         elif frame_number < NUM_SPIN_FRAMES:
             spinner_img = spinner_img.rotate(self.spinner_angles[frame_number], center=CENTER)
             if frame_number < 40:
-                center_circle_img = CENTER_CIRCLE_COVER_IMG_QUANTIZED.rotate(self.image_angles[frame_number],
-                                                                             center=(100, 100))
+                center_circle_img = self.center_circle_cover_img_quantized.rotate(self.image_angles[frame_number],
+                                                                                  center=(100, 100))
             elif frame_number >= 60:
                 # with triangle quantized with 1 less color
                 center_circle_img = self.center_circle_img_with_triangle_quantized.rotate(
@@ -195,7 +220,7 @@ class SpinnerGifMaker:
 
                 # paste cover image
                 center_circle_img = self.center_circle_img.copy()
-                center_circle_img.paste(CENTER_CIRCLE_COVER_IMG, mask=center_circle_cover_mask_img)
+                center_circle_img.paste(self.center_circle_cover_img, mask=center_circle_cover_mask_img)
                 # quantize colors minus 1 to reserve color for triangle
                 center_circle_img = center_circle_img.convert('RGB').quantize(
                     256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)

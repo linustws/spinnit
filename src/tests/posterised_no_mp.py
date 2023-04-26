@@ -53,7 +53,7 @@ class SpinnerGifMaker:
         random.shuffle(options)
         self.options = options
         # 200 x 200 pic
-        self.center_circle_cover_img = Image.open("../../assets/images/cover/cat.png")
+        self.center_circle_cover_img = Image.open("../../assets/images/cover_special/cat.png")
         folder_path = "../../assets/images/reveal_special"
         file_list = os.listdir(folder_path)
         image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
@@ -143,7 +143,7 @@ class SpinnerGifMaker:
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), CENTER_CIRCLE_MASK_IMG)
 
-        # center circle cover mask that decreases in opacity
+        # center circle cover_special mask that decreases in opacity
         center_circle_cover_mask_size = (CENTER_CIRCLE_RADIUS * 2, CENTER_CIRCLE_RADIUS * 2)
         center_circle_cover_mask_img = Image.new('L', center_circle_cover_mask_size, color=0)
         center_circle_cover_mask_draw = ImageDraw.Draw(center_circle_cover_mask_img)
@@ -155,7 +155,7 @@ class SpinnerGifMaker:
             fill = int((NUM_TOTAL_FRAMES - frame_number) / NUM_TOTAL_FRAMES * 255)
         center_circle_cover_mask_draw.ellipse((0, 0) + center_circle_cover_mask_size, fill=fill)
 
-        # comment out to see without the cover image
+        # comment out to see without the cover_special image
         bg_img.paste(center_circle_cover_img, (
             int((DIMENSIONS[0] - CENTER_CIRCLE_RADIUS * 2) / 2), int((DIMENSIONS[1] - CENTER_CIRCLE_RADIUS * 2) /
                                                                      2)), center_circle_cover_mask_img)
