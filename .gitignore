@@ -1,1 +1,4 @@
 __pycache__/
+/assets/images/special/bg/*
+/assets/images/special/cover/*
+/assets/images/special/reveal/*
