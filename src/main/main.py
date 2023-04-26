@@ -17,15 +17,16 @@ from telegram.ext import filters
 from logger import Logger
 from unposterised_no_mp_optimised import SpinnerGifMaker
 
-telegram_logger = Logger('telegram.ext._application', 'help_joy_decide.log')
-main_logger = Logger('main', 'help_joy_decide.log')
+this_dir = os.path.dirname(__file__)
+logger_rel_path = '../../help_joy_decide.log'
+logger_abs_path = os.path.join(this_dir, logger_rel_path)
+telegram_logger = Logger('telegram.ext._application', logger_abs_path)
+main_logger = Logger('main', logger_abs_path)
+gif_path = os.path.join(this_dir, 'spinner.gif')
 
 TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 DEVELOPER_CHAT_ID = int(os.environ['DEVELOPER_CHAT_ID'])
 SPECIAL_IDS = [int(i) for i in os.environ['SPECIAL_IDS'].split()]
-
-this_dir = os.path.dirname(__file__)
-gif_path = os.path.join(this_dir, 'spinner.gif')
 
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
