@@ -11,12 +11,14 @@ from components_creator import create_images
 from logger import Logger
 
 this_dir = os.path.dirname(__file__)
-assets_rel_path = '../../assets/'
-assets_abs_path = os.path.join(this_dir, assets_rel_path)
-gif_path = os.path.join(this_dir, 'spinner.gif')
 logger_rel_path = '../../help_joy_decide.log'
 logger_abs_path = os.path.join(this_dir, logger_rel_path)
 spinner_logger = Logger('spinner', logger_abs_path)
+components_abs_path = os.path.join(this_dir, '../../assets/components/')
+fonts_abs_path = os.path.join(this_dir, '../../assets/fonts/')
+general_img_abs_path = os.path.join(this_dir, '../../assets/images/general/')
+special_img_abs_path = os.path.join(this_dir, '../../assets/images/special/')
+gif_path = os.path.join(this_dir, 'spinner.gif')
 
 DIMENSIONS = (500, 500)
 CENTER = (250, 250)
@@ -37,39 +39,40 @@ ANGLES = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + \
 
 # import components
 try:
-    MASK_IMG = Image.open(assets_abs_path + 'components/mask.png')
-    CENTER_CIRCLE_MASK_IMG = Image.open(assets_abs_path + 'components/center_circle_mask.png')
-    CIRCLE_OUTLINE_IMG = Image.open(assets_abs_path + 'components/circle_outline.png')
-    CENTER_CIRCLE_OUTLINE_IMG = Image.open(assets_abs_path + 'components/center_circle_outline.png')
-    TRIANGLE_IMG = Image.open(assets_abs_path + 'components/triangle.png')
+    MASK_IMG = Image.open(components_abs_path + 'mask.png')
+    CENTER_CIRCLE_MASK_IMG = Image.open(components_abs_path + 'center_circle_mask.png')
+    CIRCLE_OUTLINE_IMG = Image.open(components_abs_path + 'circle_outline.png')
+    CENTER_CIRCLE_OUTLINE_IMG = Image.open(components_abs_path + 'center_circle_outline.png')
+    TRIANGLE_IMG = Image.open(components_abs_path + 'triangle.png')
 except FileNotFoundError as e:
     create_images(DIMENSIONS, CENTER, RADIUS, CENTER_CIRCLE_RADIUS)
-    MASK_IMG = Image.open(assets_abs_path + 'components/mask.png')
-    CENTER_CIRCLE_MASK_IMG = Image.open(assets_abs_path + 'components/center_circle_mask.png')
-    CIRCLE_OUTLINE_IMG = Image.open(assets_abs_path + 'components/circle_outline.png')
-    CENTER_CIRCLE_OUTLINE_IMG = Image.open(assets_abs_path + 'components/center_circle_outline.png')
-    TRIANGLE_IMG = Image.open(assets_abs_path + 'components/triangle.png')
+    MASK_IMG = Image.open(components_abs_path + 'mask.png')
+    CENTER_CIRCLE_MASK_IMG = Image.open(components_abs_path + 'center_circle_mask.png')
+    CIRCLE_OUTLINE_IMG = Image.open(components_abs_path + 'circle_outline.png')
+    CENTER_CIRCLE_OUTLINE_IMG = Image.open(components_abs_path + 'center_circle_outline.png')
+    TRIANGLE_IMG = Image.open(components_abs_path + 'triangle.png')
 NUM_BG_IMG_COLORS = 16
 NUM_SPINNER_IMG_COLORS = 10
 
 # 500 x 500 pic
-BG_IMG_GENERAL_QUANTIZED = Image.open(assets_abs_path + 'images/bg_general/starry_night.png').resize(
+BG_IMG_GENERAL_QUANTIZED = Image.open(general_img_abs_path + 'bg/starry_night.png').resize(
     (500, 500)).convert('RGB').quantize(NUM_BG_IMG_COLORS)
 # 200 x 200 pic
-CENTER_CIRCLE_COVER_IMG_GENERAL = Image.open(assets_abs_path + 'images/cover_general/cat.png').resize((200, 200))
+CENTER_CIRCLE_COVER_IMG_GENERAL = Image.open(general_img_abs_path + 'cover/cat.png').resize((200, 200))
 # quantize colors minus 1 to reserve color for triangle
-CENTER_CIRCLE_COVER_IMG_GENERAL_QUANTIZED = Image.open(assets_abs_path + 'images/cover_general/cat.png').resize(
-    (200, 200)).convert('RGB').quantize(256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
-REVEAL_GENERAL_FILE_PATH = assets_abs_path + 'images/reveal_general'
+CENTER_CIRCLE_COVER_IMG_GENERAL_QUANTIZED = CENTER_CIRCLE_COVER_IMG_GENERAL.copy().convert('RGB').quantize(
+    256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
+REVEAL_GENERAL_FILE_PATH = general_img_abs_path + 'reveal'
 REVEAL_GENERAL_FILE_LIST = os.listdir(REVEAL_GENERAL_FILE_PATH)
 
 try:
-    BG_IMG_SPECIAL_QUANTIZED = Image.open(assets_abs_path + 'images/bg_special/strawberry.png').resize(
+    BG_IMG_SPECIAL_QUANTIZED = Image.open(special_img_abs_path + 'bg/strawberry.png').resize(
         (500, 500)).convert('RGB').quantize(NUM_BG_IMG_COLORS)
-    CENTER_CIRCLE_COVER_IMG_SPECIAL = Image.open(assets_abs_path + 'images/cover_special/kuromi.png').resize((200, 200))
-    CENTER_CIRCLE_COVER_IMG_SPECIAL_QUANTIZED = Image.open(assets_abs_path + 'images/cover_special/kuromi.png').resize(
-        (200, 200)).convert('RGB').quantize(256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
-    REVEAL_SPECIAL_FILE_PATH = assets_abs_path + 'images/reveal_special'
+    CENTER_CIRCLE_COVER_IMG_SPECIAL = Image.open(special_img_abs_path + 'cover/kuromi.png').resize(
+        (200, 200))
+    CENTER_CIRCLE_COVER_IMG_SPECIAL_QUANTIZED = CENTER_CIRCLE_COVER_IMG_SPECIAL.copy().convert('RGB').quantize(
+        256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
+    REVEAL_SPECIAL_FILE_PATH = special_img_abs_path + 'reveal'
     REVEAL_SPECIAL_FILE_LIST = os.listdir(REVEAL_SPECIAL_FILE_PATH)
 except FileNotFoundError as e:
     spinner_logger.log('warning', "Special images not found! Will respond to all using general images.")
@@ -115,7 +118,7 @@ class SpinnerGifMaker:
         image_path = os.path.join(folder_path, random_image)
         # 200 x 200 pic
         self.center_circle_img = Image.open(image_path).resize((200, 200))
-        # self.center_circle_img = Image.open('images/reveal_special/joy_jc.png')
+        # self.center_circle_img = Image.open('images/reveal/joy_jc.png')
         # quantize colors minus 1 to reserve color for triangle
         self.center_circle_img_with_triangle_quantized = self.center_circle_img.convert('RGB').quantize(
             256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
@@ -173,7 +176,7 @@ class SpinnerGifMaker:
                                   end=end_angle, fill=color + fill, outline='black')
 
             # add text options
-            font = ImageFont.truetype(assets_abs_path + 'fonts/arial.ttf', 30)
+            font = ImageFont.truetype(fonts_abs_path + 'arial.ttf', 30)
             _, _, text_width, text_height = spinner_draw.textbbox((0, 0), option, font=font, anchor='lt')
             sector_center_angle = (start_angle + end_angle) / 2
             sector_center_x = CENTER[0] + (RADIUS + CENTER_CIRCLE_RADIUS) * 0.5 * math.cos(sector_center_angle *

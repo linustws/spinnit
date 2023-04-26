@@ -55,14 +55,14 @@ class SpinnerGifMaker:
         random.shuffle(options)
         self.options = options
         # 200 x 200 pic
-        self.center_circle_cover_img = Image.open("../../assets/images/cover_special/cat.png")
-        folder_path = "../../assets/images/reveal_special"
+        self.center_circle_cover_img = Image.open("../../assets/images/special/cover/cat.png")
+        folder_path = "../../assets/images/special/reveal"
         file_list = os.listdir(folder_path)
         image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
         random_image = random.choice(image_list)
         image_path = os.path.join(folder_path, random_image)
         self.center_circle_img = Image.open(image_path).resize((200, 200))
-        # self.center_circle_img = Image.open("images/reveal_special/joy_jc.png")
+        # self.center_circle_img = Image.open("images/reveal/joy_jc.png")
         self.colors = random.sample(PASTEL_COLORS, len(options))
         first_half = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + [i * -150 - 150 for i in
                                                                         range(int((NUM_SPIN_FRAMES - 20) / 2))]
@@ -127,8 +127,8 @@ class SpinnerGifMaker:
         frame_list = []
         for i in range(start_frame, end_frame):
             # 16 colors works
-            # print(len(Image.open("images/bg_special/strawberry.png").convert("P").getcolors()))
-            bg_img = Image.open("../../assets/images/bg_special/strawberry.png").convert("RGB").quantize(16)
+            # print(len(Image.open("images/bg/strawberry.png").convert("P").getcolors()))
+            bg_img = Image.open("../../assets/images/special/bg/strawberry.png").convert("RGB").quantize(16)
             spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
             # Add color pie slices
             spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')
@@ -184,7 +184,7 @@ class SpinnerGifMaker:
                                       int((DIMENSIONS[1] - RADIUS * 2) /
                                           2)), CIRCLE_OUTLINE_IMG)
 
-            # Center circle cover_special mask that decreases in opacity
+            # Center circle cover mask that decreases in opacity
             center_circle_cover_mask_size = (CENTER_CIRCLE_RADIUS * 2, CENTER_CIRCLE_RADIUS * 2)
             center_circle_cover_mask_img = Image.new('L', center_circle_cover_mask_size, color=0)
             center_circle_cover_mask_draw = ImageDraw.Draw(center_circle_cover_mask_img)
@@ -196,7 +196,7 @@ class SpinnerGifMaker:
                 fill = int((NUM_TOTAL_FRAMES - i) / NUM_TOTAL_FRAMES * 255)
             center_circle_cover_mask_draw.ellipse((0, 0) + center_circle_cover_mask_size, fill=fill)
 
-            # Comment out to see without the cover_special image
+            # Comment out to see without the cover image
             center_circle_img.paste(center_circle_cover_img, mask=center_circle_cover_mask_img)
 
             if i < NUM_SPIN_FRAMES or i % 2 == 1:
