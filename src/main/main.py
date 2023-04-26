@@ -22,7 +22,7 @@ main_logger = Logger('main', 'help_joy_decide.log')
 
 TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 DEVELOPER_CHAT_ID = int(os.environ['DEVELOPER_CHAT_ID'])
-SPINNER_IDS = [int(i) for i in os.environ['SPINNER_IDS'].split()]
+SPECIAL_IDS = [int(i) for i in os.environ['SPECIAL_IDS'].split()]
 
 this_dir = os.path.dirname(__file__)
 gif_path = os.path.join(this_dir, 'spinner.gif')
@@ -85,23 +85,22 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /decide command")
     options = context.args
-    if update.effective_user.id not in SPINNER_IDS:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="ps this bot is made only for joy "
-                                                                              "rn 🙃 i'll release one that can be "
-                                                                              "customised soon~")
-    else:
-        if not options:
-            await context.bot.send_message(chat_id=update.effective_chat.id, text="enter some options separated with "
-                                                                                  "spaces after /decide")
-            return
+    if not options:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="enter some options separated with "
+                                                                              "spaces after /decide")
+        return
+    if update.effective_user.id in SPECIAL_IDS:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
-        asyncio.create_task(generate_animation(options, update.effective_chat.id, context))
+        asyncio.create_task(generate_animation(options, update.effective_chat.id, context, True))
+    else:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
+        asyncio.create_task(generate_animation(options, update.effective_chat.id, context, False))
 
 
-async def generate_animation(options, chat_id, context):
+async def generate_animation(options, chat_id, context, is_special):
     start = time.time()
     try:
-        SpinnerGifMaker(options)
+        SpinnerGifMaker(options, is_special)
         await context.bot.send_animation(chat_id=chat_id, animation=gif_path)
         os.remove(gif_path)  # delete the file after sending it
         end = time.time()

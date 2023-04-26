@@ -47,7 +47,12 @@ except FileNotFoundError as e:
     TRIANGLE_IMG = Image.open(assets_abs_path + 'components/triangle.png')
 NUM_BG_IMG_COLORS = 16
 NUM_SPINNER_IMG_COLORS = 10
-BG_IMG_QUANTIZED = Image.open(assets_abs_path + 'images/bg/strawberry.png').convert('RGB').quantize(NUM_BG_IMG_COLORS)
+BG_IMG_SPECIAL_QUANTIZED = Image.open(assets_abs_path + 'images/bg_special/strawberry.png').resize((500, 500)).convert(
+    'RGB').quantize(NUM_BG_IMG_COLORS)
+BG_IMG_GENERAL_QUANTIZED = Image.open(assets_abs_path + 'images/bg_general/starry_night.png').resize(
+    (500, 500)).convert('RGB').quantize(NUM_BG_IMG_COLORS)
+REVEAL_SPECIAL_PATH = assets_abs_path + 'images/reveal_special'
+REVEAL_GENERAL_PATH = assets_abs_path + 'images/reveal_general'
 CENTER_CIRCLE_COVER_IMG = Image.open(assets_abs_path + 'images/cover/cat.png')
 # quantize colors minus 1 to reserve color for triangle
 CENTER_CIRCLE_COVER_IMG_QUANTIZED = Image.open(assets_abs_path + 'images/cover/cat.png').convert('RGB').quantize(256 -
@@ -69,18 +74,23 @@ PASTEL_COLORS = [(220, 214, 255), (214, 240, 255), (222, 255, 239), (255, 250, 2
 
 class SpinnerGifMaker:
 
-    def __init__(self, options):
+    def __init__(self, options, is_special):
         start = time.time()
         random.shuffle(options)
         self.options = options
         # 200 x 200 pic
-        folder_path = assets_abs_path + 'images/joy'
+        if is_special:
+            self.bg_img = BG_IMG_SPECIAL_QUANTIZED
+            folder_path = REVEAL_SPECIAL_PATH
+        else:
+            self.bg_img = BG_IMG_GENERAL_QUANTIZED
+            folder_path = REVEAL_GENERAL_PATH
         file_list = os.listdir(folder_path)
         image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
         random_image = random.choice(image_list)
         image_path = os.path.join(folder_path, random_image)
         self.center_circle_img = Image.open(image_path).resize((200, 200))
-        # self.center_circle_img = Image.open('images/joy/joy_jc.png')
+        # self.center_circle_img = Image.open('images/reveal_special/joy_jc.png')
         # quantize colors minus 1 to reserve color for triangle
         self.center_circle_img_with_triangle_quantized = self.center_circle_img.convert('RGB').quantize(
             256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
@@ -121,7 +131,7 @@ class SpinnerGifMaker:
 
     def prepare(self):
         # 16 colors
-        bg_img = BG_IMG_QUANTIZED
+        bg_img = self.bg_img
         spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
         # add color pie slices
         spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')
@@ -230,7 +240,6 @@ class SpinnerGifMaker:
             self.stop_frame_with_triangle = bg_img
 
         return bg_img
-
 
 # for testing
 # SpinnerGifMaker(['ff', 'flavours'])

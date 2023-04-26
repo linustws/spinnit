@@ -56,13 +56,13 @@ class SpinnerGifMaker:
         self.options = options
         # 200 x 200 pic
         self.center_circle_cover_img = Image.open("../../assets/images/cover/cat.png")
-        folder_path = "../../assets/images/joy"
+        folder_path = "../../assets/images/reveal_special"
         file_list = os.listdir(folder_path)
         image_list = [filename for filename in file_list if filename.endswith(('.png', '.jpg', '.jpeg'))]
         random_image = random.choice(image_list)
         image_path = os.path.join(folder_path, random_image)
         self.center_circle_img = Image.open(image_path).resize((200, 200))
-        # self.center_circle_img = Image.open("images/joy/joy_jc.png")
+        # self.center_circle_img = Image.open("images/reveal_special/joy_jc.png")
         self.colors = random.sample(PASTEL_COLORS, len(options))
         first_half = [0, -2, -5, -10, -15, -20, -30, -50, -70, -100] + [i * -150 - 150 for i in
                                                                         range(int((NUM_SPIN_FRAMES - 20) / 2))]
@@ -127,8 +127,8 @@ class SpinnerGifMaker:
         frame_list = []
         for i in range(start_frame, end_frame):
             # 16 colors works
-            # print(len(Image.open("images/bg/strawberry.png").convert("P").getcolors()))
-            bg_img = Image.open("../../assets/images/bg/strawberry.png").convert("RGB").quantize(16)
+            # print(len(Image.open("images/bg_special/strawberry.png").convert("P").getcolors()))
+            bg_img = Image.open("../../assets/images/bg_special/strawberry.png").convert("RGB").quantize(16)
             spinner_img = Image.new('RGB', DIMENSIONS, color=(0, 0, 0))
             # Add color pie slices
             spinner_draw = ImageDraw.Draw(spinner_img, 'RGBA')
