@@ -1,4 +1,7 @@
 __pycache__/
-/assets/images/special/bg/*
-/assets/images/special/cover/*
-/assets/images/special/reveal/*
+assets/images/special/bg/*
+assets/images/special/cover/*
+assets/images/special/reveal/*
+!assets/images/special/bg/.gitkeep
+!assets/images/special/cover/.gitkeep
+!assets/images/special/reveal/.gitkeep
