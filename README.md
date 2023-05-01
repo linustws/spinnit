@@ -1,8 +1,8 @@
-# FateRoulette
+# Spinnit!
 
-In a dilemma? No worries, let me unveil your fate 💫
+having a tough time making decisions? spin me to see where your fate lies 💫
 
-https://t.me/helpjoydecidebot
+https://t.me/spinnitbot
 
 
 
