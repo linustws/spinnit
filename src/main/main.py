@@ -18,7 +18,7 @@ from logger import Logger
 from unposterised_no_mp_optimised import SpinnerGifMaker
 
 this_dir = os.path.dirname(__file__)
-logger_rel_path = '../../help_joy_decide.log'
+logger_rel_path = '../../spinnit.log'
 logger_abs_path = os.path.join(this_dir, logger_rel_path)
 telegram_logger = Logger('telegram.ext._application', logger_abs_path)
 main_logger = Logger('main', logger_abs_path)
@@ -62,15 +62,15 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /start command")
     await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="hamou~ enter /help to see available commands")
+                                   text="hallo enter /help to see available commands")
 
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    main_logger.log('info', f"User {update.effective_user.id} called the /help command")
-    caps = "/caps - capitalise whatever you say\n"
-    await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="\n/start - check if the bot is alive\n/help - see "
-                                        "available commands\n/decide - help you decide")
+# async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     main_logger.log('info', f"User {update.effective_user.id} called the /help command")
+#     await context.bot.send_message(chat_id=update.effective_chat.id,
+#                                    text="\n/start - check if the bot is alive\n/help - see "
+#                                         "available commands\n/spin - see where your fate lies 💫 (enter each option
+#                                         separated by spaces after the command e.g. /spin eat sleep study)")
 
 
 async def echo_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -84,11 +84,11 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    main_logger.log('info', f"User {update.effective_user.id} called the /decide command")
+    main_logger.log('info', f"User {update.effective_user.id} called the /spin command")
     options = context.args
     if not options:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="enter some options separated with "
-                                                                              "spaces after /decide")
+                                                                              "spaces after /spin")
         return
     if update.effective_user.id in SPECIAL_IDS:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
@@ -119,14 +119,14 @@ if __name__ == '__main__':
 
     start_handler = CommandHandler('start', start_command)
     echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo_message)
-    help_handler = CommandHandler('help', help_command)
-    spin_handler = CommandHandler('decide', spin_command)
+    # help_handler = CommandHandler('help', help_command)
+    spin_handler = CommandHandler('spin', spin_command)
     unknown_handler = MessageHandler(filters.COMMAND, unknown_command)
 
     application.add_error_handler(error_handler)
     application.add_handler(start_handler)
     application.add_handler(echo_handler)
-    application.add_handler(help_handler)
+    # application.add_handler(help_handler)
     application.add_handler(spin_handler)
     application.add_handler(unknown_handler)
 
