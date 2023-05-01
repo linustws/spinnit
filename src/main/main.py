@@ -2,6 +2,7 @@ import asyncio
 import html
 import json
 import os
+import random
 import time
 import traceback
 
@@ -61,21 +62,25 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /start command")
+    user_first_name = update.effective_chat.first_name
     await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="hallo enter /help to see available commands")
+                                   text=f"hallo {user_first_name} :D type /halp to see what i can do")
 
 
-# async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-#     main_logger.log('info', f"User {update.effective_user.id} called the /help command")
-#     await context.bot.send_message(chat_id=update.effective_chat.id,
-#                                    text="\n/start - check if the bot is alive\n/help - see "
-#                                         "available commands\n/spin - see where your fate lies 💫 (enter each option
-#                                         separated by spaces after the command e.g. /spin eat sleep study)")
+async def halp_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    main_logger.log('info', f"User {update.effective_user.id} called the /halp command")
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text="\n/start - check if im alive\n/halp - get help\n/spin - see where "
+                                        "your fate lies 💫 (enter each option separated by spaces after the command "
+                                        "e.g. /spin eat sleep study)")
 
 
 async def echo_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} sent a message")
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
+    words = ["mhm mhm", "yes yes", "sheesh", "ok can", "alrites", "g", "wow", "sure", "noice", "unds unds", "frfr",
+             "same", "slay", "noted"]
+    response = random.choice(words)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -88,7 +93,8 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     options = context.args
     if not options:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="enter some options separated with "
-                                                                              "spaces after /spin")
+                                                                              "spaces after /spin (e.g. /spin eat "
+                                                                              "sleep study)")
         return
     if update.effective_user.id in SPECIAL_IDS:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
@@ -119,14 +125,14 @@ if __name__ == '__main__':
 
     start_handler = CommandHandler('start', start_command)
     echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo_message)
-    # help_handler = CommandHandler('help', help_command)
+    halp_handler = CommandHandler('halp', halp_command)
     spin_handler = CommandHandler('spin', spin_command)
     unknown_handler = MessageHandler(filters.COMMAND, unknown_command)
 
     application.add_error_handler(error_handler)
     application.add_handler(start_handler)
     application.add_handler(echo_handler)
-    # application.add_handler(help_handler)
+    application.add_handler(halp_handler)
     application.add_handler(spin_handler)
     application.add_handler(unknown_handler)
 
