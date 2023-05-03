@@ -23,7 +23,6 @@ logger_rel_path = '../../spinnit.log'
 logger_abs_path = os.path.join(this_dir, logger_rel_path)
 telegram_logger = Logger('telegram.ext._application', logger_abs_path)
 main_logger = Logger('main', logger_abs_path)
-gif_path = os.path.join(this_dir, 'spinner.gif')
 
 TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 DEVELOPER_CHAT_ID = int(os.environ['DEVELOPER_CHAT_ID'])
@@ -106,8 +105,9 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def generate_animation(options, chat_id, context, is_special):
     start = time.time()
+    gif_path = os.path.join(this_dir, f"{chat_id}.gif")
     try:
-        SpinnerGifMaker(options, is_special)
+        SpinnerGifMaker(chat_id, options, is_special)
         await context.bot.send_animation(chat_id=chat_id, animation=gif_path)
         os.remove(gif_path)  # delete the file after sending it
         end = time.time()

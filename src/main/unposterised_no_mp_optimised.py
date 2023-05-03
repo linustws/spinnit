@@ -18,7 +18,6 @@ components_abs_path = os.path.join(this_dir, '../../assets/components/')
 fonts_abs_path = os.path.join(this_dir, '../../assets/fonts/')
 general_img_abs_path = os.path.join(this_dir, '../../assets/images/general/')
 special_img_abs_path = os.path.join(this_dir, '../../assets/images/special/')
-gif_path = os.path.join(this_dir, 'spinner.gif')
 
 DIMENSIONS = (500, 500)
 CENTER = (250, 250)
@@ -97,8 +96,8 @@ PASTEL_COLORS = [(220, 214, 255), (214, 240, 255), (222, 255, 239), (255, 250, 2
 
 class SpinnerGifMaker:
 
-    def __init__(self, options, is_special):
-        start = time.time()
+    def __init__(self, chat_id, options, is_special):
+        # start = time.time()
         random.shuffle(options)
         self.options = options
         if is_special:
@@ -133,6 +132,7 @@ class SpinnerGifMaker:
         self.image_angles = ANGLES
         self.stop_frame_no_triangle = None
         self.stop_frame_with_triangle = None
+        self.gif_path = os.path.join(this_dir, f"{chat_id}.gif")
 
         bg_img, spinner_img = self.prepare()
 
@@ -141,9 +141,9 @@ class SpinnerGifMaker:
             # print(f'frame {i}')
             frame = self.getSpinnerFrame(bg_img.copy(), spinner_img, i)
             frame_list.append(frame)
-        frame_list[0].save(gif_path, format='GIF', append_images=frame_list[1:], save_all=True,
+        frame_list[0].save(self.gif_path, format='GIF', append_images=frame_list[1:], save_all=True,
                            duration=DURATIONS, disposal=2, loop=0)
-        end = time.time()
+        # end = time.time()
         # print(f'time taken no mp unposterised: {end - start} seconds')
 
     def paste(self, bg_img, im, box=None, mask=None):
@@ -269,5 +269,6 @@ class SpinnerGifMaker:
 
         return bg_img
 
+
 # for testing
-# SpinnerGifMaker(['ff', 'flavours'])
+# SpinnerGifMaker(123, ['ff', 'flavours'], True)
