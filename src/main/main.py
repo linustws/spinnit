@@ -28,6 +28,8 @@ TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 DEVELOPER_CHAT_ID = int(os.environ['DEVELOPER_CHAT_ID'])
 SPECIAL_IDS = [int(i) for i in os.environ['SPECIAL_IDS'].split()]
 
+is_spinner_down = False
+
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Log the error and send a telegram message to notify the developer."""
@@ -105,6 +107,7 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def generate_animation(options, chat_id, context, is_special):
     start = time.time()
+    global is_spinner_down
     gif_path = os.path.join(this_dir, f"{chat_id}.gif")
     try:
         SpinnerGifMaker(chat_id, options, is_special)
@@ -113,8 +116,16 @@ async def generate_animation(options, chat_id, context, is_special):
         end = time.time()
         # await context.bot.send_message(chat_id=chat_id, text=f"Time taken: {end - start} seconds")
     except telegram.error.RetryAfter as e:
-        main_logger.log('warning', "Telegram API rate limit exceeded!")
-        await context.bot.send_message(chat_id=chat_id, text="ps i cnt think rn, come back ltr bah")
+        wait_seconds = int(str(e).split("in ", 1)[1].split(" seconds", 1)[0])
+        main_logger.log('warning', f"Telegram API rate limit exceeded! Retry after {wait_seconds} seconds")
+        await context.bot.send_message(chat_id=chat_id, text="oops i cnt think rn, come back ltr bah")
+        if not is_spinner_down:  # only notify the developer if the spinner is not already down
+            is_spinner_down = True
+            await context.bot.send_message(chat_id=DEVELOPER_CHAT_ID,
+                                           text=f"Spinner is down. Waiting {wait_seconds} seconds.")
+            await asyncio.sleep(wait_seconds)
+            is_spinner_down = False
+            await context.bot.send_message(chat_id=DEVELOPER_CHAT_ID, text="Spinner is back up.")
     except ValueError as e:
         await context.bot.send_message(chat_id=chat_id, text="too many optionsss")
 
