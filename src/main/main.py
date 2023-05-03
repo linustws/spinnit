@@ -29,6 +29,7 @@ DEVELOPER_CHAT_ID = int(os.environ['DEVELOPER_CHAT_ID'])
 SPECIAL_IDS = [int(i) for i in os.environ['SPECIAL_IDS'].split()]
 
 is_spinner_down = False
+special_mode_dict = {special_id: True for special_id in SPECIAL_IDS}
 
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -70,10 +71,17 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def halp_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /halp command")
-    await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="\n/start - check if im alive\n/halp - get help\n/spin - see where "
-                                        "your fate lies 💫 (enter each option separated by spaces after the command "
-                                        "e.g. /spin eat sleep study)")
+    if update.effective_user.id in SPECIAL_IDS:
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="\n/start - check if im alive\n/halp - get help\n/spin - see where "
+                                            "your fate lies 💫 (enter each option separated by spaces after the command "
+                                            "e.g. /spin eat sleep study)\n/special - choose which pics to see (this "
+                                            "is a secret command that is not available to others 😘)")
+    else:
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="\n/start - check if im alive\n/halp - get help\n/spin - see where "
+                                            "your fate lies 💫 (enter each option separated by spaces after the command "
+                                            "e.g. /spin eat sleep study)")
 
 
 async def send_random_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -99,7 +107,8 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     if update.effective_user.id in SPECIAL_IDS:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
-        asyncio.create_task(generate_animation(options, update.effective_chat.id, context, True))
+        asyncio.create_task(
+            generate_animation(options, update.effective_chat.id, context, special_mode_dict[update.effective_user.id]))
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
         asyncio.create_task(generate_animation(options, update.effective_chat.id, context, False))
@@ -130,6 +139,31 @@ async def generate_animation(options, chat_id, context, is_special):
         await context.bot.send_message(chat_id=chat_id, text="too many optionsss")
 
 
+async def special_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global special_mode_dict
+    main_logger.log('info', f"User {update.effective_user.id} called the /special command")
+    user_input = context.args
+    if not user_input:
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text=f"special mode: {str(special_mode_dict[update.effective_user.id]).lower()}"
+                                            f"\nenter /special [true/false] to choose which pics to see")
+        return
+    if update.effective_user.id in SPECIAL_IDS:
+        if user_input[0].lower() == "true":
+            main_logger.log('info', f"User {update.effective_user.id} set special mode to true")
+            special_mode_dict[update.effective_user.id] = True
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="special mode set to true ❤️")
+        elif user_input[0].lower() == "false":
+            main_logger.log('info', f"User {update.effective_user.id} set special mode to false")
+            special_mode_dict[update.effective_user.id] = False
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="special mode set to false 🐱")
+        else:
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="enter /special [true/false] to "
+                                                                                  f"choose which pics to see")
+    else:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="😳")
+
+
 if __name__ == '__main__':
     application = ApplicationBuilder().token(***REMOVED***).read_timeout(
         30).write_timeout(30).build()
@@ -138,6 +172,7 @@ if __name__ == '__main__':
     random_message_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), send_random_message)
     halp_handler = CommandHandler('halp', halp_command)
     spin_handler = CommandHandler('spin', spin_command)
+    special_handler = CommandHandler('special', special_command)
     unknown_handler = MessageHandler(filters.COMMAND, unknown_command)
 
     application.add_error_handler(error_handler)
@@ -145,6 +180,7 @@ if __name__ == '__main__':
     application.add_handler(random_message_handler)
     application.add_handler(halp_handler)
     application.add_handler(spin_handler)
+    application.add_handler(special_handler)
     application.add_handler(unknown_handler)
 
     application.run_polling()
