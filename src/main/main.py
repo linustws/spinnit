@@ -75,7 +75,7 @@ async def halp_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                         "e.g. /spin eat sleep study)")
 
 
-async def echo_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def send_random_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} sent a message")
     words = ["mhm mhm", "yes yes", "sheesh", "ok can", "alrites", "g", "wow", "sure", "noice", "unds unds", "frfr",
              "same", "slay", "noted"]
@@ -124,14 +124,14 @@ if __name__ == '__main__':
         30).write_timeout(30).build()
 
     start_handler = CommandHandler('start', start_command)
-    echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo_message)
+    random_message_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), send_random_message)
     halp_handler = CommandHandler('halp', halp_command)
     spin_handler = CommandHandler('spin', spin_command)
     unknown_handler = MessageHandler(filters.COMMAND, unknown_command)
 
     application.add_error_handler(error_handler)
     application.add_handler(start_handler)
-    application.add_handler(echo_handler)
+    application.add_handler(random_message_handler)
     application.add_handler(halp_handler)
     application.add_handler(spin_handler)
     application.add_handler(unknown_handler)
