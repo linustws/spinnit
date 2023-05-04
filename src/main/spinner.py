@@ -1,7 +1,6 @@
 import math
 import os
 import random
-import time
 
 from PIL import Image
 from PIL import ImageDraw
@@ -94,7 +93,7 @@ PASTEL_COLORS = [(220, 214, 255), (214, 240, 255), (222, 255, 239), (255, 250, 2
                  (247, 206, 118), (140, 115, 134), (156, 147, 89), (165, 114, 131), (232, 213, 149)]
 
 
-class SpinnerGifMaker:
+class Spinner:
 
     def __init__(self, chat_id, options, is_special):
         # start = time.time()
@@ -271,4 +270,4 @@ class SpinnerGifMaker:
 
 
 # for testing
-# SpinnerGifMaker(123, ['ff', 'flavours'], True)
+# Spinner(123, ['ff', 'flavours'], True)

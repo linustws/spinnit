@@ -3,7 +3,6 @@ import html
 import json
 import os
 import random
-import time
 import traceback
 
 import telegram
@@ -16,7 +15,7 @@ from telegram.ext import MessageHandler
 from telegram.ext import filters
 
 from logger import Logger
-from unposterised_no_mp_optimised import SpinnerGifMaker
+from spinner import Spinner
 
 this_dir = os.path.dirname(__file__)
 logger_rel_path = '../../spinnit.log'
@@ -115,14 +114,13 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def generate_animation(options, chat_id, context, is_special):
-    start = time.time()
+    # start = time.time()
     global is_spinner_down
     gif_path = os.path.join(this_dir, f"{chat_id}.gif")
     try:
-        SpinnerGifMaker(chat_id, options, is_special)
+        Spinner(chat_id, options, is_special)
         await context.bot.send_animation(chat_id=chat_id, animation=gif_path)
-        os.remove(gif_path)  # delete the file after sending it
-        end = time.time()
+        # end = time.time()
         # await context.bot.send_message(chat_id=chat_id, text=f"Time taken: {end - start} seconds")
     except telegram.error.RetryAfter as e:
         wait_seconds = int(str(e).split("in ", 1)[1].split(" seconds", 1)[0])
@@ -135,8 +133,13 @@ async def generate_animation(options, chat_id, context, is_special):
             await asyncio.sleep(wait_seconds)
             is_spinner_down = False
             await context.bot.send_message(chat_id=DEVELOPER_CHAT_ID, text="Spinner is back up.")
+    except telegram.error.TimedOut:
+        main_logger.log('warning', "Timed out, 'generate_animation' task exception was never retrieved")
     except ValueError as e:
         await context.bot.send_message(chat_id=chat_id, text="too many optionsss")
+
+    if os.path.isfile(gif_path):
+        os.remove(gif_path)  # delete the file after sending it, only if it exists
 
 
 async def special_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -161,7 +164,8 @@ async def special_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await context.bot.send_message(chat_id=update.effective_chat.id, text="enter /special [true/false] to "
                                                                                   f"choose which pics to see")
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="😳")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="😳 this is a secret command, "
+                                                                              "how did u find it :o")
 
 
 if __name__ == '__main__':
