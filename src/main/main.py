@@ -16,6 +16,7 @@ from telegram.ext import filters
 
 from logger import Logger
 from spinner import Spinner
+from rate_limiter import RateLimiter
 
 this_dir = os.path.dirname(__file__)
 logger_rel_path = '../../spinnit.log'
