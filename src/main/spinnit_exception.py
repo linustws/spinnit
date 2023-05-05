@@ -1,0 +1,2 @@
+class SpinnitException(Exception):
+    pass

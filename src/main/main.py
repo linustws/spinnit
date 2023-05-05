@@ -17,6 +17,7 @@ from telegram.ext import filters
 from logger import Logger
 from spinner import Spinner
 from rate_limiter import RateLimiter
+from spinnit_exception import SpinnitException
 
 this_dir = os.path.dirname(__file__)
 logger_rel_path = '../../spinnit.log'
@@ -43,7 +44,7 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     tb_string = "".join(tb_list)
 
     # Build the message with some markup and additional information about what happened.
-    # You might need to add some logic to deal with messages longer than the 4096 character limit.
+    # You might need to add some logic to deal with messages longer than the 4096-character limit.
     update_str = update.to_dict() if isinstance(update, Update) else str(update)
     message = (
         f"An exception was raised while handling an update\n"
@@ -109,35 +110,43 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id in SPECIAL_IDS:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
         asyncio.create_task(
-            generate_animation(options, update.effective_chat.id, context, special_mode_dict[update.effective_user.id]))
+            generate_animation(options, update.effective_chat.id, update.effective_user.id, context,
+                               special_mode_dict[update.effective_user.id]))
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
-        asyncio.create_task(generate_animation(options, update.effective_chat.id, context, False))
+        asyncio.create_task(generate_animation(options, update.effective_chat.id, update.effective_user.id, context,
+                                               False))
 
 
-async def generate_animation(options, chat_id, context, is_special):
+async def generate_animation(options, chat_id, user_id, context, is_special):
     # start = time.time()
     global is_spinner_down
     gif_path = os.path.join(this_dir, f"{chat_id}.gif")
     try:
         Spinner(chat_id, options, is_special)
-        await context.bot.send_animation(chat_id=chat_id, animation=gif_path)
+        await context.bot.send_animation(chat_id=chat_id, animation=gif_path, write_timeout=30,
+                                         api_kwargs={'user_id': user_id})
         # end = time.time()
         # await context.bot.send_message(chat_id=chat_id, text=f"Time taken: {end - start} seconds")
+    except SpinnitException as e:
+        time_to_window_end = e
+        await context.bot.send_message(chat_id=chat_id, text=f"oops i cnt think rn, come back aft {time_to_window_end} "
+                                                             f"seconds")
     except telegram.error.RetryAfter as e:
-        wait_seconds = int(str(e).split("in ", 1)[1].split(" seconds", 1)[0])
-        main_logger.log('warning', f"Telegram API rate limit exceeded! Retry after {wait_seconds} seconds")
-        await context.bot.send_message(chat_id=chat_id, text="oops i cnt think rn, come back ltr bah")
+        time_to_window_end = int(str(e).split("in ", 1)[1].split(" seconds", 1)[0])
+        main_logger.log('warning', f"Telegram API rate limit exceeded! Retry after {time_to_window_end} seconds")
+        await context.bot.send_message(chat_id=chat_id, text=f"oops i cnt think rn, come back aft {time_to_window_end} "
+                                                             f"seconds")
         if not is_spinner_down:  # only notify the developer if the spinner is not already down
             is_spinner_down = True
             await context.bot.send_message(chat_id=DEVELOPER_CHAT_ID,
-                                           text=f"Spinner is down. Waiting {wait_seconds} seconds.")
-            await asyncio.sleep(wait_seconds)
+                                           text=f"Spinner is down. Waiting {time_to_window_end} seconds.")
+            await asyncio.sleep(time_to_window_end)
             is_spinner_down = False
             await context.bot.send_message(chat_id=DEVELOPER_CHAT_ID, text="Spinner is back up.")
     except telegram.error.TimedOut:
         main_logger.log('warning', "Timed out, 'generate_animation' task exception was never retrieved")
-    except ValueError as e:
+    except ValueError:
         await context.bot.send_message(chat_id=chat_id, text="too many optionsss")
 
     if os.path.isfile(gif_path):
