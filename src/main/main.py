@@ -142,6 +142,9 @@ async def generate_animation(options, chat_id, user_id, context, is_special):
             await context.bot.send_message(chat_id=DEVELOPER_CHAT_ID,
                                            text=f"Spinner is down. Waiting {time_to_window_end} seconds.")
             await asyncio.sleep(time_to_window_end)
+            RateLimiter.spin_command_tokens = 10
+            RateLimiter.spin_command_window_end = None
+            RateLimiter.spin_command_timestamps = {}
             is_spinner_down = False
             await context.bot.send_message(chat_id=DEVELOPER_CHAT_ID, text="Spinner is back up.")
     except telegram.error.TimedOut:
