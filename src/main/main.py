@@ -64,7 +64,7 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     main_logger.log('info', f"User {update.effective_user.id} called the /start command")
-    user_first_name = update.effective_chat.first_name
+    user_first_name = update.effective_user.first_name
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text=f"hallo {user_first_name} :D type /halp to see what i can do")
 
@@ -85,11 +85,12 @@ async def halp_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def send_random_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    main_logger.log('info', f"User {update.effective_user.id} sent a message")
-    words = ["mhm mhm", "yes yes", "sheesh", "ok can", "alrites", "g", "wow", "sure", "noice", "unds unds", "frfr",
-             "same", "slay", "noted"]
-    response = random.choice(words)
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=response)
+    if update.effective_chat.type == telegram.Chat.PRIVATE:
+        main_logger.log('info', f"User {update.effective_user.id} sent a message")
+        words = ["mhm mhm", "yes yes", "sheesh", "ok can", "alrites", "g", "wow", "sure", "noice", "unds unds", "frfr",
+                 "same", "slay", "noted"]
+        response = random.choice(words)
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
