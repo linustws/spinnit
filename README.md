@@ -19,6 +19,6 @@
 3. Enter /halp to see available commands
 
 ### Development
-- Deployed on aws
+- Deployed on AWS
 - As gifs are restricted to 256 colours, I had to remap the colours to reduce posterization using quantization
 - Uses custom rate limiter that implements the token bucket algorithm while capping each unique and non-special user to at most 2 spins every 5 minute window period (Telegram imposes a rate limit of sending 10 gifs every 5 minutes 😿)
