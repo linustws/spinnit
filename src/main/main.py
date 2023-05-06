@@ -163,23 +163,25 @@ async def special_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global special_mode_dict
     main_logger.log('info', f"User {update.effective_user.id} called the /special command")
     user_input = context.args
+    special_mode = "on" if special_mode_dict[update.effective_user.id] is True else "off"
     if not user_input:
         await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text=f"special mode: {str(special_mode_dict[update.effective_user.id]).lower()}"
-                                            f"\nenter /special [true/false] to choose which pics to see")
+                                       text=f"special mode: {special_mode}"
+                                            f"\nenter /special [on/off] to choose which pics to see")
         return
     if update.effective_user.id in SPECIAL_IDS:
-        if user_input[0].lower() == "true":
-            main_logger.log('info', f"User {update.effective_user.id} set special mode to true")
+        if user_input[0].lower() == "on":
+            main_logger.log('info', f"User {update.effective_user.id} set special mode to on")
             special_mode_dict[update.effective_user.id] = True
-            await context.bot.send_message(chat_id=update.effective_chat.id, text="special mode set to true ❤️")
-        elif user_input[0].lower() == "false":
-            main_logger.log('info', f"User {update.effective_user.id} set special mode to false")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="special mode on ❤️")
+        elif user_input[0].lower() == "off":
+            main_logger.log('info', f"User {update.effective_user.id} set special mode to off")
             special_mode_dict[update.effective_user.id] = False
-            await context.bot.send_message(chat_id=update.effective_chat.id, text="special mode set to false 🐱")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="special mode off 🐱")
         else:
-            await context.bot.send_message(chat_id=update.effective_chat.id, text="enter /special [true/false] to "
-                                                                                  f"choose which pics to see")
+            await context.bot.send_message(chat_id=update.effective_chat.id,
+                                           text=f"special mode: {special_mode}"
+                                                f"\nenter /special [on/off] to choose which pics to see")
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="😳 this is a secret command, "
                                                                               "how did u find it :o")
