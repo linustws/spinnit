@@ -76,13 +76,16 @@ async def halp_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text="\n/start - check if im alive\n/halp - get help\n/spin - see where "
                                             "your fate lies 💫 (enter each option separated by spaces after the command "
-                                            "e.g. /spin eat sleep study)\n/special - choose which pics to see (this "
-                                            "is a secret command that is not available to others 😘)")
+                                            "e.g. /spin koi gongcha liho) ℹ️ this command may not be "
+                                            "available at all times due to telegram's rate limiting\n/special - "
+                                            "choose which pics to see (this is a secret command that is not "
+                                            "available to others 😘)")
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text="\n/start - check if im alive\n/halp - get help\n/spin - see where "
                                             "your fate lies 💫 (enter each option separated by spaces after the command "
-                                            "e.g. /spin eat sleep study)")
+                                            "e.g. /spin koi gongcha liho) ℹ️ this command may not be "
+                                            "available at all times due to telegram's rate limiting")
 
 
 async def send_random_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -104,8 +107,8 @@ async def spin_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     options = context.args
     if not options:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="enter some options separated with "
-                                                                              "spaces after /spin (e.g. /spin eat "
-                                                                              "sleep study)")
+                                                                              "spaces after /spin (e.g. /spin koi "
+                                                                              "gongcha liho)")
         return
     if update.effective_user.id in SPECIAL_IDS:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="wait i thinking i thinking")
