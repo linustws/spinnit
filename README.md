@@ -4,7 +4,7 @@
 
 ### Link to Spinnit!: https://t.me/spinnitbot
 
-![demo](/Users/linustws/Desktop/Spinnit!/assets/demo/demo.gif)
+![demo](/assets/demo/demo.gif)
 
 ### Features
 - Creates gif on the fly with user's options 🎨
