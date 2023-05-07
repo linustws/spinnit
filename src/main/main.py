@@ -163,13 +163,13 @@ async def special_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global special_mode_dict
     main_logger.log('info', f"User {update.effective_user.id} called the /special command")
     user_input = context.args
-    special_mode = "on" if special_mode_dict[update.effective_user.id] is True else "off"
-    if not user_input:
-        await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text=f"special mode: {special_mode}"
-                                            f"\nenter /special [on/off] to choose which pics to see")
-        return
     if update.effective_user.id in SPECIAL_IDS:
+        special_mode = "on" if special_mode_dict[update.effective_user.id] is True else "off"
+        if not user_input:
+            await context.bot.send_message(chat_id=update.effective_chat.id,
+                                           text=f"special mode: {special_mode}"
+                                                f"\nenter /special [on/off] to choose which pics to see")
+            return
         if user_input[0].lower() == "on":
             main_logger.log('info', f"User {update.effective_user.id} set special mode to on")
             special_mode_dict[update.effective_user.id] = True
