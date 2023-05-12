@@ -1,5 +1,5 @@
 __pycache__/
-spinnit.log
+logs/spinnit.log
 assets/images/special/bg/*
 assets/images/special/cover/*
 assets/images/special/reveal/*

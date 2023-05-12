@@ -17,7 +17,7 @@ from logger import Logger
 from spinnit_exception import SpinnitException
 
 this_dir = os.path.dirname(__file__)
-logger_rel_path = '../../spinnit.log'
+logger_rel_path = '../../logs/spinnit.log'
 logger_abs_path = os.path.join(this_dir, logger_rel_path)
 rate_limiter_logger = Logger('rate_limiter', logger_abs_path)
 

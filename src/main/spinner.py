@@ -10,7 +10,7 @@ from components_creator import create_images
 from logger import Logger
 
 this_dir = os.path.dirname(__file__)
-logger_rel_path = '../../spinnit.log'
+logger_rel_path = '../../logs/spinnit.log'
 logger_abs_path = os.path.join(this_dir, logger_rel_path)
 spinner_logger = Logger('spinner', logger_abs_path)
 components_abs_path = os.path.join(this_dir, '../../assets/components/')

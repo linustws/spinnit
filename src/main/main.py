@@ -20,7 +20,7 @@ from rate_limiter import RateLimiter
 from spinnit_exception import SpinnitException
 
 this_dir = os.path.dirname(__file__)
-logger_rel_path = '../../spinnit.log'
+logger_rel_path = '../../logs/spinnit.log'
 logger_abs_path = os.path.join(this_dir, logger_rel_path)
 telegram_logger = Logger('telegram.ext._application', logger_abs_path)
 main_logger = Logger('main', logger_abs_path)
