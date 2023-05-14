@@ -25,9 +25,14 @@ logger_abs_path = os.path.join(this_dir, logger_rel_path)
 telegram_logger = Logger('telegram.ext._application', logger_abs_path)
 main_logger = Logger('main', logger_abs_path)
 
-TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
-DEVELOPER_CHAT_ID = int(os.environ['DEVELOPER_CHAT_ID'])
-SPECIAL_IDS = [int(i) for i in os.environ['SPECIAL_IDS'].split()]
+TELEGRAM_TOKEN = os.getenv('SPINNIT_BOT_TOKEN', None)
+DEVELOPER_CHAT_ID = int(os.getenv('DEVELOPER_CHAT_ID', '-1'))
+SPECIAL_IDS = [int(i) for i in os.getenv('SPECIAL_IDS', os.getenv('DEVELOPER_CHAT_ID', '-1')).split()]
+
+if TELEGRAM_TOKEN is None:
+    raise SpinnitException("TELEGRAM_TOKEN environment variable not set.")
+if DEVELOPER_CHAT_ID == -1:
+    raise SpinnitException("DEVELOPER_CHAT_ID environment variable not set.")
 
 is_spinner_down = False
 special_mode_dict = {special_id: True for special_id in SPECIAL_IDS}
