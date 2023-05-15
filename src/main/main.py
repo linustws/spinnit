@@ -190,7 +190,7 @@ async def special_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token(***REMOVED***).read_timeout(
+    application = ApplicationBuilder().token(TELEGRAM_TOKEN).rate_limiter(RateLimiter()).read_timeout(
         30).write_timeout(30).build()
 
     start_handler = CommandHandler('start', start_command)
