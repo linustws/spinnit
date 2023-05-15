@@ -23,7 +23,7 @@
 - As gifs are restricted to 256 colours, I had to remap the colours to reduce posterization using quantization
 - Uses custom rate limiter that implements the token bucket algorithm while capping each unique and non-special user to at most 2 spins every 5 minute window period (Telegram imposes a rate limit of sending 10 gifs every 5 minutes 😿)
 
-### Building your own Docker Image
+### Building your own Spinnit! with a Docker Image
 To build a Docker image for Spinnit!, follow these steps:
 
 1. Make sure you have Docker installed on your machine.
