@@ -33,7 +33,7 @@ To build a Docker image for Spinnit!, follow these steps:
 
 2. Create a new Telegram Bot using BotFather. You will need this for step 5.
 
-3. Clone the repository from GitHub:
+3. Clone this repository from GitHub:
 
    `git clone https://github.com/linustws/spinnit`
 4. Navigate to the project's root directory:
