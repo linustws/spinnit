@@ -49,11 +49,11 @@ To build a Docker image for Spinnit!, follow these steps:
    
    Replace `'your telegram token'`, `'your developer chat id'`, and `'your special ids'` with your actual values.
 
-   `your telegram token` -> `'<your token from BotFather>'`
+   `'your telegram token'` -> `'<your token from BotFather>'`
    
-   `your developer chat_id` -> `'<your Telegram ID>'` (you can use this bot _@userinfobot_ to get your Telegram ID)
+   `'your developer chat_id'` -> `'<your Telegram ID>'` (you can use this bot _@userinfobot_ to get your Telegram ID)
    
-   `your special ids` -> `'<Telegram IDs that can use the special mode>'` (separated by spaces e.g. '123456789 987654321'). If you only want yourself to be a special user, you can leave this unchanged. _Note: Special mode i.e. see special pictures for special users requires you to provide **square pictures in the form of .png/.jpg/.jpeg** (unless you want stretched pictures) in the special folder (under `assets/images`), Spinnit! will use the general pictures if special pictures cannot be found. Regardless of special pictures, special users will have the increased cap of 10 /spin commands every 5 minutes instead of 2._
+   `'your special ids'` -> `'<Telegram IDs that can use the special mode>'` (separated by spaces e.g. '123456789 987654321'). If you only want yourself to be a special user, you can leave this unchanged. _Note: Special mode i.e. see special pictures for special users requires you to provide **square pictures in the form of .png/.jpg/.jpeg** (unless you want stretched pictures) in the special folder (under `assets/images`), Spinnit! will use the general pictures if special pictures cannot be found. Regardless of special pictures, special users will have the increased cap of 10 /spin commands every 5 minutes instead of 2._
 
 6. Open a terminal or command prompt.
 Build the Docker image by running the following command:
