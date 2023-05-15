@@ -63,22 +63,35 @@ CENTER_CIRCLE_COVER_IMG_GENERAL_QUANTIZED = CENTER_CIRCLE_COVER_IMG_GENERAL.copy
 REVEAL_GENERAL_FILE_PATH = general_img_abs_path + 'reveal'
 REVEAL_GENERAL_FILE_LIST = os.listdir(REVEAL_GENERAL_FILE_PATH)
 
-try:
-    BG_IMG_SPECIAL_QUANTIZED = Image.open(special_img_abs_path + 'bg/strawberry.png').resize(
-        (500, 500)).convert('RGB').quantize(NUM_BG_IMG_COLORS)
-    CENTER_CIRCLE_COVER_IMG_SPECIAL = Image.open(special_img_abs_path + 'cover/kuromi.png').resize(
-        (200, 200))
+bg_img_path = next(
+    (os.path.join(special_img_abs_path + 'bg', file) for file in os.listdir(special_img_abs_path + 'bg') if
+     file.endswith(('.png', '.jpg', '.jpeg'))), None)
+if bg_img_path:
+    BG_IMG_SPECIAL_QUANTIZED = Image.open(bg_img_path).resize((500, 500)).convert('RGB').quantize(NUM_BG_IMG_COLORS)
+else:
+    spinner_logger.log('warning', "Special bg image not found! Will respond to all using general bg image.")
+    BG_IMG_SPECIAL_QUANTIZED = BG_IMG_GENERAL_QUANTIZED
+
+cover_img_path = next(
+    (os.path.join(special_img_abs_path + 'cover', file) for file in os.listdir(special_img_abs_path + 'cover') if
+     file.endswith(('.png', '.jpg', '.jpeg'))), None)
+if cover_img_path:
+    CENTER_CIRCLE_COVER_IMG_SPECIAL = Image.open(cover_img_path).resize((200, 200))
     CENTER_CIRCLE_COVER_IMG_SPECIAL_QUANTIZED = CENTER_CIRCLE_COVER_IMG_SPECIAL.copy().convert('RGB').quantize(
         256 - NUM_BG_IMG_COLORS - NUM_SPINNER_IMG_COLORS - 1)
-    REVEAL_SPECIAL_FILE_PATH = special_img_abs_path + 'reveal'
-    REVEAL_SPECIAL_FILE_LIST = os.listdir(REVEAL_SPECIAL_FILE_PATH)
-except FileNotFoundError as e:
-    spinner_logger.log('warning', "Special images not found! Will respond to all using general images.")
-    BG_IMG_SPECIAL_QUANTIZED = BG_IMG_GENERAL_QUANTIZED
-    REVEAL_SPECIAL_FILE_PATH = REVEAL_GENERAL_FILE_PATH
-    REVEAL_SPECIAL_FILE_LIST = REVEAL_GENERAL_FILE_LIST
+else:
+    spinner_logger.log('warning', "Special cover image not found! Will respond to all using general cover image.")
     CENTER_CIRCLE_COVER_IMG_SPECIAL = CENTER_CIRCLE_COVER_IMG_GENERAL
     CENTER_CIRCLE_COVER_IMG_SPECIAL_QUANTIZED = CENTER_CIRCLE_COVER_IMG_GENERAL_QUANTIZED
+
+REVEAL_SPECIAL_FILE_PATH = special_img_abs_path + 'reveal'
+REVEAL_SPECIAL_FILE_LIST = os.listdir(REVEAL_SPECIAL_FILE_PATH)
+image_files = [file for file in REVEAL_SPECIAL_FILE_LIST if file.endswith(('.png', '.jpg', '.jpeg'))]
+if not image_files:
+    spinner_logger.log('warning', "Special reveal images not found! Will respond to all using general reveal "
+                                  "images.")
+    REVEAL_SPECIAL_FILE_PATH = REVEAL_GENERAL_FILE_PATH
+    REVEAL_SPECIAL_FILE_LIST = REVEAL_GENERAL_FILE_LIST
 
 CIRCLE_OUTLINE_IMG_QUANTIZED = CIRCLE_OUTLINE_IMG.convert('RGB').quantize(2)
 CENTER_CIRCLE_OUTLINE_IMG_QUANTIZED = CENTER_CIRCLE_OUTLINE_IMG.convert('RGB').quantize(2)
@@ -267,7 +280,6 @@ class Spinner:
             self.stop_frame_with_triangle = bg_img
 
         return bg_img
-
 
 # for testing
 # Spinner(123, ['ff', 'flavours'], True)

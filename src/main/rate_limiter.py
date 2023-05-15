@@ -21,7 +21,14 @@ logger_rel_path = '../../logs/spinnit.log'
 logger_abs_path = os.path.join(this_dir, logger_rel_path)
 rate_limiter_logger = Logger('rate_limiter', logger_abs_path)
 
-SPECIAL_IDS = [int(i) for i in os.environ['SPECIAL_IDS'].split()]
+DEVELOPER_CHAT_ID = os.getenv('DEVELOPER_CHAT_ID', 'your developer chat id')
+if DEVELOPER_CHAT_ID == 'your developer chat id':
+    raise SpinnitException("DEVELOPER_CHAT_ID environment variable not set. Please rebuild image using Dockerfile.")
+DEVELOPER_CHAT_ID = int(DEVELOPER_CHAT_ID)
+SPECIAL_IDS = os.getenv('SPECIAL_IDS', 'your special ids')
+SPECIAL_IDS = [int(i) for i in SPECIAL_IDS.split()] \
+    if SPECIAL_IDS != 'your special ids' else \
+    [int(i) for i in os.getenv('DEVELOPER_CHAT_ID', 'your developer chat id').split()]
 
 
 class RateLimiter(BaseRateLimiter):
