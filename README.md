@@ -24,6 +24,9 @@
 - Uses custom rate limiter that implements the token bucket algorithm while capping each unique and non-special user to at most 2 spins every 5 minute window period (Telegram imposes a rate limit of sending 10 gifs every 5 minutes 😿)
 
 ### Building your own Spinnit! with a Docker Image
+
+_This can increase your cap from 2 to a max of 10 /spin commands every 5 minutes by making yourself a special user._
+
 To build a Docker image for Spinnit!, follow these steps:
 
 1. Make sure you have Docker installed on your machine.
@@ -50,7 +53,7 @@ To build a Docker image for Spinnit!, follow these steps:
    
    `your developer chat_id` -> `'<your Telegram ID>'` (you can use this bot _@userinfobot_ to get your Telegram ID)
    
-   `your special ids` -> `'<Telegram IDs that can use the special mode>'` (separated by spaces e.g. '123456789 987654321'). If you do not want to have a special mode feature, just leave this unchanged. _Note: Special mode requires you to provide **square pictures in the form of .png/.jpg/.jpeg** (unless you want stretched pictures) in the special folder (under `assets/images`), Spinnit! will use the general pictures if special pictures cannot be found._
+   `your special ids` -> `'<Telegram IDs that can use the special mode>'` (separated by spaces e.g. '123456789 987654321'). If you only want yourself to be a special user, you can leave this unchanged. _Note: Special mode i.e. see special pictures for special users requires you to provide **square pictures in the form of .png/.jpg/.jpeg** (unless you want stretched pictures) in the special folder (under `assets/images`), Spinnit! will use the general pictures if special pictures cannot be found. Regardless of special pictures, special users will have the increased cap of 10 /spin commands every 5 minutes instead of 2._
 
 6. Open a terminal or command prompt.
 Build the Docker image by running the following command:
